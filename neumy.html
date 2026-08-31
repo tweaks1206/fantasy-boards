@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Neumy Report · Fairfield</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#111; --panel:#1a1a1a; --line:#2c2c2c; --text:#f3f3f3; --muted:#8a8a8a; --gold:#c8102e; --paper:#f4efe4; --ink:#161616; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:"IBM Plex Sans",system-ui,sans-serif; background:radial-gradient(800px 300px at 0% 0%,#c8102e22,transparent 50%),var(--bg); color:var(--text); }
+    .wrap { max-width:860px; margin:0 auto; padding:22px 14px 80px; }
+    .eyebrow { font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); font-weight:600; }
+    h1 { font-family:"Bebas Neue",sans-serif; font-size:clamp(40px,8vw,68px); line-height:.9; margin:6px 0 10px; }
+    h1 span { color:var(--gold); }
+    .lede { color:var(--muted); line-height:1.55; margin-bottom:18px; }
+    nav a { color:#f3f3f3; text-decoration:none; font-size:13px; font-weight:600; margin-right:14px; }
+    nav a.dim { color:var(--muted); }
+    .weeks { display:flex; flex-wrap:wrap; gap:6px; margin:14px 0 18px; }
+    .pill { border:1px solid var(--line); background:#000; color:var(--muted); border-radius:999px; padding:6px 10px; font-size:12px; font-weight:600; cursor:pointer; }
+    .pill.on { border-color:var(--gold); color:#fff; background:var(--gold); }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:14px; }
+    .paper { background:var(--paper); color:var(--ink); border-radius:16px; padding:22px 20px; white-space:pre-wrap; font-size:15px; line-height:1.55; }
+    .paper h2 { font-family:"Bebas Neue",sans-serif; font-size:28px; letter-spacing:.04em; margin-bottom:8px; }
+    .meta { color:#6b6b6b; font-family:"IBM Plex Mono",monospace; font-size:12px; margin-bottom:12px; }
+    .vid { position:relative; padding-top:56.25%; background:#000; border-radius:12px; overflow:hidden; margin-bottom:14px; }
+    .vid iframe, .vid video { position:absolute; inset:0; width:100%; height:100%; border:0; }
+    .empty { color:var(--muted); padding:30px 0; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a href="fairfield.html">League Bible</a>
+    <a href="index.html" class="dim">Boards</a>
+    <a href="neumy-desk.html" class="dim">Desk</a>
+  </nav>
+  <div class="eyebrow">Fairfield Fantasy · Commissioner tape</div>
+  <h1>THE <span>NEUMY</span> REPORT</h1>
+  <p class="lede">Pete’s weekly recap, in Pete’s voice. Winners, blowouts, lucky bastards, power rankings, and whatever else he decided to say out loud.</p>
+  <div class="weeks" id="weeks"></div>
+  <div id="stage" class="empty">Loading reports…</div>
+</div>
+<script>
+const INDEX_URL = "reports/index.json";
+function yt(id){ return `<div class="vid"><iframe src="https://www.youtube.com/embed/${id}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`; }
+function vimeo(id){ return `<div class="vid"><iframe src="https://player.vimeo.com/video/${id}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>`; }
+function fileVid(url){ return `<div class="vid"><video controls playsinline src="${url}"></video></div>`; }
+function media(url){
+  if(!url) return "";
+  const u = url.trim();
+  let m = u.match(/(?:youtu\.be\/|v=|embed\/)([A-Za-z0-9_-]{6,})/);
+  if(m) return yt(m[1]);
+  m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if(m) return vimeo(m[1]);
+  if(/\.(mp4|webm|ogg)(\?|$)/i.test(u) || /streamable|cloudinary|mux\.com|b-cdn/.test(u)) return fileVid(u);
+  return `<p class="meta"><a href="${u}" style="color:#c8102e">Open video</a></p>`;
+}
+function render(rep){
+  const stage = document.getElementById("stage");
+  if(!rep){ stage.innerHTML = `<div class="empty">No report yet. Pete is either cooking or asleep.</div>`; return; }
+  stage.innerHTML = `<div class="card">${media(rep.videoUrl)}<div class="paper"><div class="meta">WEEK ${rep.week} · ${rep.season||""} · filed ${rep.publishedAt||"undated"}</div><h2>${rep.title||("Neumy Report · Week "+rep.week)}</h2>${escapeHtml(rep.body||"")}</div></div>`;
+}
+function escapeHtml(s){ return s.replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+async function load(){
+  let index;
+  try { index = await fetch(INDEX_URL+"?t="+Date.now()).then(r=>{ if(!r.ok) throw 0; return r.json(); }); }
+  catch(e){ document.getElementById("stage").textContent = "No reports published yet."; return; }
+  const reports = (index.reports||[]).slice().sort((a,b)=> (String(b.season)+String(b.week).padStart(2,"0")).localeCompare(String(a.season)+String(a.week).padStart(2,"0")));
+  const weeks = document.getElementById("weeks");
+  let current = reports[0];
+  function drawPills(){
+    weeks.innerHTML = reports.map(r=>`<button class="pill ${current&&r.file===current.file?"on":""}" data-file="${r.file}">${r.season} W${r.week}</button>`).join("");
+    weeks.querySelectorAll(".pill").forEach(b=>b.onclick=async()=>{
+      const item = reports.find(x=>x.file===b.dataset.file);
+      current = item;
+      drawPills();
+      const rep = await fetch(item.file+"?t="+Date.now()).then(r=>r.json());
+      render(rep);
+    });
+  }
+  drawPills();
+  if(current){ render(await fetch(current.file+"?t="+Date.now()).then(r=>r.json())); }
+  else render(null);
+}
+load();
+</script>
+</body>
+</html>
