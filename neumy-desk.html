@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Neumy Desk · locked</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#0e0e0e; --panel:#191919; --line:#2e2e2e; --text:#f3f3f3; --muted:#8a8a8a; --gold:#c8102e; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:"IBM Plex Sans",system-ui,sans-serif; background:var(--bg); color:var(--text); }
+    .wrap { max-width:820px; margin:0 auto; padding:22px 14px 80px; }
+    h1 { font-family:"Bebas Neue",sans-serif; font-size:48px; line-height:.9; margin:8px 0 12px; }
+    h1 span { color:var(--gold); }
+    .muted { color:var(--muted); font-size:14px; line-height:1.5; }
+    label { display:block; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:14px 0 6px; }
+    input, textarea { width:100%; background:#111; color:#fff; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font:15px/1.45 "IBM Plex Sans",system-ui,sans-serif; }
+    textarea.body { min-height:420px; resize:vertical; }
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media(max-width:640px){ .row { grid-template-columns:1fr; } }
+    button { background:var(--gold); color:#fff; border:0; border-radius:10px; padding:11px 14px; font-weight:700; cursor:pointer; margin-right:8px; margin-top:14px; }
+    button.ghost { background:transparent; border:1px solid var(--line); }
+    .gate { max-width:420px; margin:12vh auto; }
+    .msg { margin-top:12px; color:#f0d59a; font-size:13px; white-space:pre-wrap; }
+    .hint { background:#141414; border:1px solid var(--line); border-radius:12px; padding:12px; margin:12px 0 0; color:var(--muted); font-size:13px; line-height:1.5; }
+    a { color:#f0d59a; }
+    .ok { color:#8f8; }
+    .bad { color:#f88; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div id="gate" class="gate">
+    <div class="muted">FAIRFIELD · COMMISSIONER DESK</div>
+    <h1>NEUMY <span>LOCK</span></h1>
+    <p class="muted">Small door. Not Fort Knox. If you are not Pete or Tweak, turn around.</p>
+    <label>Passphrase</label>
+    <input id="pw" type="password" autocomplete="current-password" />
+    <button id="unlock">Unlock</button>
+    <div class="msg" id="gateMsg"></div>
+  </div>
+  <div id="desk" hidden>
+    <div class="muted"><a href="neumy.html">← public report</a> · <a href="fairfield.html">bible</a></div>
+    <h1>NEUMY <span>DESK</span></h1>
+    <p class="muted">Paste the week the way you write it. Add a video link if you filmed it. Publish writes into the GitHub repo so the league page updates.</p>
+    <div class="row">
+      <div><label>Season</label><input id="season" value="2026" /></div>
+      <div><label>Week</label><input id="week" type="number" min="1" max="18" value="1" /></div>
+    </div>
+    <label>Headline</label>
+    <input id="title" placeholder="Neumy Report: Your week 1 fantasy recap" />
+    <label>Video URL (YouTube unlisted, Vimeo, Streamable, or direct .mp4)</label>
+    <input id="videoUrl" placeholder="https://youtu.be/…" />
+    <p class="hint">GitHub Pages will not host a raw 200MB phone dump. Film it, upload unlisted to YouTube, paste the link. League hits play on the public page.</p>
+    <label>The report</label>
+    <textarea id="body" class="body" placeholder="This weeks winners:…"></textarea>
+    <label>GitHub token (fine-grained, Contents write on tweaks1206/fantasy-boards only)</label>
+    <input id="token" type="password" placeholder="github_pat_… this browser only" />
+    <p class="hint">Tweak generates the token once and texts Pete. Token never goes into the repo. If you skip the token, use Download JSON and Tweak drops the file in reports/.</p>
+    <button id="publish">Publish to site</button>
+    <button class="ghost" id="preview">Preview JSON</button>
+    <button class="ghost" id="download">Download JSON</button>
+    <button class="ghost" id="lock">Lock desk</button>
+    <div class="msg" id="msg"></div>
+  </div>
+</div>
+<script>
+const HASH = "c05017f5ef9cbcd3e75463c3485ea116346c12575e4fdcdd3dbaf81280c263f0";
+const OWNER = "tweaks1206";
+const REPO = "fantasy-boards";
+const BRANCH = "main";
+const SKEY = "neumy-desk-ok";
+async function sha256(s){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+function payload(){
+  const week = Number(document.getElementById("week").value||1);
+  const season = document.getElementById("season").value.trim()||"2026";
+  return {
+    season, week,
+    title: document.getElementById("title").value.trim() || `Neumy Report · Week ${week}`,
+    videoUrl: document.getElementById("videoUrl").value.trim(),
+    body: document.getElementById("body").value,
+    publishedAt: new Date().toISOString().slice(0,16).replace("T"," ")
+  };
+}
+function fileFor(p){ return `reports/${p.season}-week-${String(p.week).padStart(2,"0")}.json`; }
+function showDesk(on){
+  document.getElementById("gate").hidden = on;
+  document.getElementById("desk").hidden = !on;
+}
+async function tryUnlock(pw){
+  const h = await sha256(pw);
+  if(h !== HASH){ document.getElementById("gateMsg").textContent = "Nope."; return false; }
+  sessionStorage.setItem(SKEY, "1");
+  showDesk(true);
+  return true;
+}
+document.getElementById("unlock").onclick = () => tryUnlock(document.getElementById("pw").value);
+document.getElementById("pw").addEventListener("keydown", e => { if(e.key==="Enter") tryUnlock(document.getElementById("pw").value); });
+if(sessionStorage.getItem(SKEY)==="1") showDesk(true);
+document.getElementById("lock").onclick = () => { sessionStorage.removeItem(SKEY); showDesk(false); };
+document.getElementById("preview").onclick = () => {
+  document.getElementById("msg").textContent = JSON.stringify(payload(), null, 2);
+};
+document.getElementById("download").onclick = () => {
+  const p = payload();
+  const blob = new Blob([JSON.stringify(p,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = fileFor(p).split("/")[1];
+  a.click();
+};
+async function gh(path, method, token, body){
+  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`, {
+    method,
+    headers: { Accept:"application/vnd.github+json", Authorization:"Bearer "+token },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const data = await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(data.message || res.status);
+  return data;
+}
+function b64(str){ return btoa(unescape(encodeURIComponent(str))); }
+document.getElementById("publish").onclick = async () => {
+  const msg = document.getElementById("msg");
+  const token = document.getElementById("token").value.trim();
+  const p = payload();
+  if(!p.body.trim()){ msg.innerHTML = '<span class="bad">Paste the report first.</span>'; return; }
+  if(!token){ msg.innerHTML = '<span class="bad">No token. Hit Download JSON and send it to Tweak, or paste the PAT.</span>'; return; }
+  msg.textContent = "Publishing…";
+  try {
+    const path = fileFor(p);
+    let sha;
+    try { const existing = await gh(path, "GET", token); sha = existing.sha; } catch(e){}
+    await gh(path, "PUT", token, {
+      message: `neumy report week ${p.week} ${p.season}`,
+      content: b64(JSON.stringify(p, null, 2)),
+      branch: BRANCH,
+      sha
+    });
+    let index = { reports: [] };
+    let indexSha;
+    try {
+      const raw = await gh("reports/index.json", "GET", token);
+      indexSha = raw.sha;
+      index = JSON.parse(atob(raw.content.replace(/\n/g,"")));
+    } catch(e){}
+    index.reports = (index.reports||[]).filter(r => r.file !== path);
+    index.reports.push({ season:p.season, week:p.week, title:p.title, file:path, publishedAt:p.publishedAt });
+    index.reports.sort((a,b)=> a.season===b.season ? a.week-b.week : String(a.season).localeCompare(String(b.season)));
+    await gh("reports/index.json", "PUT", token, {
+      message: `neumy index week ${p.week}`,
+      content: b64(JSON.stringify(index, null, 2)),
+      branch: BRANCH,
+      sha: indexSha
+    });
+    msg.innerHTML = `<span class="ok">Live. Give GitHub Pages a minute, then open neumy.html</span>`;
+  } catch(e){
+    msg.innerHTML = `<span class="bad">${e.message}</span>`;
+  }
+};
+</script>
+</body>
+</html>
