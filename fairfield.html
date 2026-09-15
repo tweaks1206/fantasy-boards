@@ -113,6 +113,7 @@
     <div class="stats" id="bookStats"></div>
     <div class="pills" id="bookPills"></div>
     <section class="card" id="bookCard"></section>
+    <section class="card"><h2>2026 standings</h2><p class="hint">Every score in the book, added up. Wins, then points for. ESPN is the official record.</p><div class="scroll"><table id="bookStand"></table></div></section>
     <section class="card"><h2>The model's board</h2><p class="hint">Weekly projection per team. Every line on this page is the gap between two of these numbers. Refreshed Tuesdays.</p><div class="scroll"><table id="bookBoard"></table></div></section>
     <section class="card"><h2>Season schedule</h2><p class="hint">Fourteen weeks. Away at home. Line is the model's number today. Playoffs are weeks 15 to 17, matchups TBD.</p><div class="scroll"><table id="bookSched"></table></div></section>
   </div>
@@ -145,7 +146,7 @@
       <p class="hint">Bottom of the bible on purpose. Score blends win%, playoff rate, titles/finals, scoring, wasted 10-win teams.</p>
       <div class="scroll"><table id="grades"></table></div>
     </section>
-    <footer>Closing streaks only (ESPN STRK). 2019–20: 12 teams / 13 games. 2021–25: 14 teams / 14 games. Drew is 2026 tape only.</footer>
+    <footer>Closing streaks only (ESPN STRK). 2019–20: 12 teams / 13 games. 2021–25: 14 teams / 14 games. Drew is 2026 tape only. · <span class="mono" id="buildTag"></span></footer>
   </div>
 
   <div id="view-desk" class="view">
@@ -269,6 +270,7 @@ function tagList(owner){
   const lp=LAST[owner]||0;
   if(lp===1) t.push("last place");
   if(lp>=2) t.push(lp+"x last place");
+  if(!t.length && c.seasons) t.push("no ring");
   return t;
 }
 function tagHtml(owner,inline){
@@ -294,22 +296,16 @@ const ALIAS=[
   ["Drew Hiboki",["Drew Hiboki"]]
 ];
 function stampTags(html){
-  let out=html;
+  // one pass over a longest-first alternation, so a short alias can never re-match inside a longer one already stamped
   const jobs=[];
-  ALIAS.forEach(([owner,names],oi)=>{
-    const chips=tagHtml(owner,true);
-    if(!chips) return;
-    names.forEach(n=>jobs.push({n,chips,oi,len:n.length}));
-  });
-  jobs.sort((a,b)=>b.len-a.len);
-  jobs.forEach((j,i)=>{
-    const re=new RegExp("\\b"+j.n.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\$&")+"\\b(?!'s)","g");
-    out=out.replace(re,"@@O"+j.oi+"@@"+j.n+"@@E@@");
-  });
+  ALIAS.forEach(([owner,names],oi)=>{const chips=tagHtml(owner,true);names.forEach(n=>jobs.push({n,chips,oi}));});
+  jobs.sort((a,b)=>b.n.length-a.n.length);
+  const esc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  const re=new RegExp("\\b("+jobs.map(j=>esc(j.n)).join("|")+")\\b(?!'s)","g");
   const seen={};
-  return out.replace(/@@O(\d+)@@([\s\S]*?)@@E@@/g,(_,id,name)=>{
-    const j=jobs.find(x=>String(x.oi)===id);
-    const chips=seen[id]?"":(seen[id]=1,j?j.chips:"");
+  return html.replace(re,(m,name)=>{
+    const j=jobs.find(x=>x.n===name); if(!j) return m;
+    const chips=seen[j.oi]?"":(seen[j.oi]=1,j.chips);
     return "<strong>"+name+"</strong>"+chips;
   });
 }
@@ -427,13 +423,15 @@ function drawYear(){
 }
 drawYear();
 /* ===== ENOUGH CUM · schedule, lines, picks. Tuesday: paste new proj from `rankings.py --emit-js`, add results[w], add picks[w+1]. ===== */
+const BUILD="2026-09-15.1";   // bumped by stamp_version.py before every upload
 const BOOK={
 sd:25,
-proj:{"Model Busters": 127.4, "Trust The Process": 125.2, "Jackin' Goff": 123.6, "Jack's Scary Team": 123.4, "Team Ermesquid": 122.9, "Team Mackey": 122.3, "Drew's Daring Team": 121.5, "Team Raimo": 120.8, "Chokin The Belichicken": 119.7, "Team Pappas": 119.0, "Team Cream Pies LLC": 118.4, "TWEAK": 117.5, "Hansen's Most Wanted": 117.4, "Booty Bandits": 113.7},
+proj:{"Model Busters": 127.5, "Trust The Process": 125.5, "Jackin' Goff": 123.5, "Jack's Scary Team": 123.2, "Team Mackey": 122.1, "Drew's Daring Team": 121.4, "Team Raimo": 121.0, "Team Ermesquid": 120.2, "Chokin The Belichicken": 119.8, "Team Pappas": 118.9, "Team Cream Pies LLC": 118.2, "TWEAK": 117.5, "Hansen's Most Wanted": 117.4, "Booty Bandits": 115.6},
 who:{"Trust The Process": "Chris Adams", "Hansen's Most Wanted": "AJ", "Drew's Daring Team": "Drew Hiboki", "TWEAK": "Tweak", "Jack's Scary Team": "Jack Christensen", "Team Mackey": "Mackey", "Jackin' Goff": "Bailey", "Model Busters": "Tana", "Team Ermesquid": "Dropick", "Booty Bandits": "Pete", "Team Pappas": "Pappas", "Team Raimo": "Raimo", "Team Cream Pies LLC": "Ja", "Chokin The Belichicken": "Charlie"},
-alias:{"Jackin' Goff":"Two Minutemen","Chokin The Belichicken":"The Cokeheads"},
+alias:{"Jackin' Goff": "Two Minutemen", "Chokin The Belichicken": "The Cokeheads"},
 lines:{
-  1:{"Model Busters@TWEAK": {"fav": "Model Busters", "spread": 10.0}, "Trust The Process@Jackin' Goff": {"fav": "Jackin' Goff", "spread": 0.5}, "Team Raimo@Team Mackey": {"fav": "Team Mackey", "spread": 1.5}, "Team Ermesquid@Jack's Scary Team": {"fav": "Jack's Scary Team", "spread": 0.5}, "Drew's Daring Team@Booty Bandits": {"fav": "Drew's Daring Team", "spread": 8.0}, "Chokin The Belichicken@Team Pappas": {"fav": "Team Pappas", "spread": 0.5}, "Team Cream Pies LLC@Hansen's Most Wanted": {"fav": "Team Cream Pies LLC", "spread": 1.0}}
+  1:{"Model Busters@TWEAK": {"fav": "Model Busters", "spread": 10.0}, "Trust The Process@Jackin' Goff": {"fav": "Jackin' Goff", "spread": 0.5}, "Team Raimo@Team Mackey": {"fav": "Team Mackey", "spread": 1.5}, "Team Ermesquid@Jack's Scary Team": {"fav": "Jack's Scary Team", "spread": 0.5}, "Drew's Daring Team@Booty Bandits": {"fav": "Drew's Daring Team", "spread": 8.0}, "Chokin The Belichicken@Team Pappas": {"fav": "Team Pappas", "spread": 0.5}, "Team Cream Pies LLC@Hansen's Most Wanted": {"fav": "Team Cream Pies LLC", "spread": 1.0}},
+  2:{"Trust The Process@Model Busters": {"fav": "Model Busters", "spread": 2.0}, "TWEAK@Team Raimo": {"fav": "Team Raimo", "spread": 3.5}, "Jackin' Goff@Team Ermesquid": {"fav": "Jackin' Goff", "spread": 3.5}, "Team Mackey@Drew's Daring Team": {"fav": "Team Mackey", "spread": 0.5}, "Jack's Scary Team@Chokin The Belichicken": {"fav": "Jack's Scary Team", "spread": 3.5}, "Booty Bandits@Team Cream Pies LLC": {"fav": "Team Cream Pies LLC", "spread": 2.5}, "Team Pappas@Hansen's Most Wanted": {"fav": "Team Pappas", "spread": 1.5}}
 },
 sched:{
   1:[["Model Busters", "TWEAK"], ["Trust The Process", "Jackin' Goff"], ["Team Raimo", "Team Mackey"], ["Team Ermesquid", "Jack's Scary Team"], ["Drew's Daring Team", "Booty Bandits"], ["Chokin The Belichicken", "Team Pappas"], ["Team Cream Pies LLC", "Hansen's Most Wanted"]],
@@ -488,9 +486,48 @@ picks:{
     "type": "ml",
     "why": "Champion at home against the man who murdered me in round one. AJ steals belts. He can steal a week. Moneyline. No points. No respect."
    }
+  },
+  2:{
+   "Trust The Process@Model Busters": {
+    "side": "Trust The Process",
+    "type": "spread",
+    "why": "Chris hung 190 and the model still makes him a two-point dog because the model does not chase. I chase. Allen, Gibbs, McBride against a quarterback who scored 4. Take the points."
+   },
+   "TWEAK@Team Raimo": {
+    "side": "Team Raimo",
+    "type": "spread",
+    "why": "Tweak lived through Tana with the tight end I laughed at. Raimo lost by seven with Ja'Marr Chase at 3.2. Chase does not score three twice. Lay it."
+   },
+   "Jackin' Goff@Team Ermesquid": {
+    "side": "Jackin' Goff",
+    "type": "spread",
+    "why": "Caleb Williams went for 37 and Bailey still lost by 68. Dropick benched Mahomes, got 25 out of Lamar, and everything else scored 8. The Minutemen cover."
+   },
+   "Team Mackey@Drew's Daring Team": {
+    "side": "Drew's Daring Team",
+    "type": "spread",
+    "why": "Mackey started a quarterback who scored negative points and won anyway. That does not happen twice. Drew has Goff on the bench outscoring Herbert. Tall guy at home."
+   },
+   "Jack's Scary Team@Chokin The Belichicken": {
+    "side": "Chokin The Belichicken",
+    "type": "spread",
+    "why": "Charlie put up 154 with Jalen Coker, a man he was questionable about starting, going for 34. Jack won by 16 with McCaffrey at 14. Take the points and the home Cokehead."
+   },
+   "Booty Bandits@Team Cream Pies LLC": {
+    "side": "Booty Bandits",
+    "type": "spread",
+    "why": "146 out of spite, exactly as promised. Ja beat the champion with Barkley at 9 and Davante at 5.6. The commissioner takes the points and the grudge."
+   },
+   "Team Pappas@Hansen's Most Wanted": {
+    "side": "Hansen's Most Wanted",
+    "type": "ml",
+    "why": "Pappas scored 112 and lost by forty. AJ scored 88 and lost by twenty-five. Somebody has to win this. The champion at home again, because the model already lost this bet once and I am stubborn."
+   }
   }
 },
-results:{}
+results:{
+  1:{"Model Busters": 96.5, "TWEAK": 106.46, "Trust The Process": 190.16, "Jackin' Goff": 121.96, "Team Raimo": 101.46, "Team Mackey": 108.22, "Team Ermesquid": 99.76, "Jack's Scary Team": 115.5, "Drew's Daring Team": 103.36, "Booty Bandits": 146.6, "Chokin The Belichicken": 154.02, "Team Pappas": 112.52, "Team Cream Pies LLC": 112.8, "Hansen's Most Wanted": 87.7}
+}
 };
 function erf(x){const s=x<0?-1:1;x=Math.abs(x);const t=1/(1+0.3275911*x);const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);return s*y;}
 function phi(z){return 0.5*(1+erf(z/Math.SQRT2));}
@@ -545,6 +582,14 @@ function drawBook(){
     return `<div class="mu ${L.fav===a?"fav-away":"fav-home"}"><div class="mu-teams"><span class="away">${nm(a)}<small>${BOOK.who[a]||""}</small></span><span class="at">@</span><span class="home">${nm(b)}<small>${BOOK.who[b]||""}</small></span></div><div class="mu-line mono">${nm(L.fav)} ${sideTxt(L.fav,L)} (${L.fml}) · ${nm(L.dog)} ${sideTxt(L.dog,L)} (${L.dml}) · ${Math.round(L.p*100)}% · O/U ${L.total}</div>${pickHtml}${resHtml}</div>`;
   }).join("");
   document.getElementById("bookCard").innerHTML=`<h2>Week ${bookWeek} card</h2><p class="hint">Away at home. Favorite in red. Spread is the model's projected margin. Win chance assumes a ${BOOK.sd}-point weekly standard deviation per team.</p>${cards}`;
+  // standings from every graded week
+  const st={}; Object.keys(BOOK.proj).forEach(t=>st[t]={w:0,l:0,tie:0,pf:0,pa:0,g:0});
+  Object.keys(BOOK.results).forEach(k=>{const r=BOOK.results[k];(BOOK.sched[k]||[]).forEach(([a,b])=>{if(r[a]==null||r[b]==null)return;
+    st[a].pf+=r[a];st[a].pa+=r[b];st[b].pf+=r[b];st[b].pa+=r[a];st[a].g++;st[b].g++;
+    if(r[a]>r[b]){st[a].w++;st[b].l++;}else if(r[b]>r[a]){st[b].w++;st[a].l++;}else{st[a].tie++;st[b].tie++;}});});
+  const order=Object.keys(st).sort((x,y)=>st[y].w-st[x].w||st[y].pf-st[x].pf);
+  document.getElementById("bookStand").innerHTML="<tr><th>#</th><th>Team</th><th>Owner</th><th>W-L</th><th>PF</th><th>PA</th><th>Avg</th></tr>"+order.map((t,i)=>{const s=st[t];
+    return `<tr><td class="mono">${i+1}</td><td>${nm(t)}</td><td class="muted">${BOOK.who[t]||""}</td><td class="mono">${s.w}-${s.l}${s.tie?"-"+s.tie:""}</td><td class="mono">${s.pf.toFixed(2)}</td><td class="mono">${s.pa.toFixed(2)}</td><td class="mono">${s.g?(s.pf/s.g).toFixed(1):"—"}</td></tr>`;}).join("");
   const board=Object.keys(BOOK.proj).sort((x,y)=>BOOK.proj[y]-BOOK.proj[x]);
   document.getElementById("bookBoard").innerHTML="<tr><th>#</th><th>Team</th><th>Owner</th><th>Proj / wk</th><th>vs #1</th></tr>"+board.map((t,i)=>`<tr><td class="mono">${i+1}</td><td>${nm(t)}</td><td class="muted">${BOOK.who[t]||""}</td><td class="mono">${BOOK.proj[t].toFixed(1)}</td><td class="mono ${i?"neg":"muted"}">${i?"-"+(BOOK.proj[board[0]]-BOOK.proj[t]).toFixed(1):"—"}</td></tr>`).join("");
   document.getElementById("bookSched").innerHTML="<tr><th>Wk</th><th>Away</th><th>Home</th><th>Line</th><th>Pick</th><th>Final</th></tr>"+Object.keys(BOOK.sched).map(k=>BOOK.sched[k].map(([a,b])=>{
@@ -552,6 +597,7 @@ function drawBook(){
     return `<tr><td class="mono">${k}</td><td>${nm(a)}</td><td>${nm(b)}</td><td class="mono">${nm(L.fav)} ${sideTxt(L.fav,L)}</td><td>${p?pickTxt(p,L)+gradeMark(g):""}</td><td class="mono">${(r&&r[a]!=null&&r[b]!=null)?r[a]+" · "+r[b]:""}</td></tr>`;
   }).join("")).join("");
 }
+document.getElementById("buildTag").textContent="build "+BUILD;
 drawBook();
 function showView(id,btn){
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='view-'+id));
@@ -703,6 +749,74 @@ const REPORTS=[
 </ol>
 <p><em>Post-draft patch: the league runs one running back and two flex, not two and one. The software has been informed. Chris Adams moves to second at 125.2, Charlie to ninth at 119.7, nobody else moves, and the week 1 numbers above stand as posted. Also, two men renamed their teams after reading this column. Bailey is now Two Minutemen. Charlie is now The Cokeheads. The model does not grade names.</em></p>
 <p>The model keeps a record all year and prints it at the top of the book so you can watch it go 7-0 while you go 0-7. Scoreboard hits the desk Tuesday. GO OUT THERE AND CUM.</p>
+`},
+{id:"wk1",label:"Week 1",title:"NEUMY REPORT: WEEK 1",meta:"Week 1 · Year 8 · Tuesday Sept 15 2026",html:`
+<p>NEUMY REPORT. Your week 1 fantasy recap. WEEK 1 IS IN THE BOOKS. The drama. The upsets. The blowouts. A 190. A negative quarterback. A champion who started a ghost. Boys… WE ARE SO BACK. ALEXA, PLAY THUNDERSTRUCK.</p>
+<h4>This week’s winners</h4>
+<ol>
+<li>Trust The Process — 190.16 over Two Minutemen 121.96. Chris Adams hung ONE NINETY. Josh Allen 35.7. Gibbs 33.6. Christian Watson 32.7. McBride 24.5. The process is no longer a eulogy. It is a crime scene.</li>
+<li>The Cokeheads — 154.02 over Team Pappas 112.52. Charlie renamed the team and then scored like it. Jeanty 32.7, Smith-Njigba 26.2, Hurts 24.7, and Jalen Coker, a man listed questionable, 33.8 in the flex.</li>
+<li>Booty Bandits — 146.6 over Drew’s Daring Team 103.36. I said 140 out of spite. 146.6. Henry 35.3. Justin Jefferson, the 11.9-a-game reach, 31.2. Olave 28.2. The model had me fourteenth. The model can read this from the basement.</li>
+<li>Jack’s Scary Team — 115.5 over Team Ermesquid 99.76. Lawrence 26.1, Collins 21.2, and a 19 from the Steelers defense. The tourist is 1-0. Check waivers anyway.</li>
+<li>Team Cream Pies LLC — 112.8 over Hansen’s Most Wanted 87.7. Ja ended the champion in week 1 with Dart 26.6, Montgomery 28.9, Goedert 23.7. He ends people. It is what he does.</li>
+<li>Team Mackey — 108.22 over Team Raimo 101.46. Bijan 31.3 carried a lineup that started Kyler Murray for NEGATIVE POINT THREE EIGHT. You cannot make this up. Silent killer, deaf quarterback.</li>
+<li>TWEAK — 106.46 over Model Busters 96.5. Isaiah Likely, the 4.4-a-game tight end I put in the reaches, 27.8. Jonathan Taylor 25.1. Tana got 4.1 from Matthew Stafford, the steal of the draft, and a zero from Brock Bowers. Model Busters busted the model in the wrong direction.</li>
+</ol>
+<h4>Most points scored this season 😮</h4>
+<ol>
+<li>Trust The Process — 190.16</li>
+<li>The Cokeheads — 154.02</li>
+<li>Booty Bandits — 146.6</li>
+</ol>
+<h4>Least points scored this season 🤮</h4>
+<ol>
+<li>Hansen’s Most Wanted — 87.7. The champion. Started TreVeyon Henderson, who was OUT, for a zero. Fannin 4.1. Butker 7. The belt thief started a ghost and lost to the man who murdered me in round one.</li>
+<li>Model Busters — 96.5. The model’s number one. Stafford 4.1. Bowers out. Sutton 3.1 on a Monday night. Renamed to bust the model and busted himself.</li>
+<li>Team Ermesquid — 99.76. Four quarterbacks on the roster. Started the right one by three points. Lamar 25, Mahomes 21.7 on the bench. London 5.5. Kelce 10.1, all of it after eleven at night. Then he cut Daniel Jones and Ray Davis before the body was cold.</li>
+</ol>
+<h4>Closest game</h4>
+<p>Team Mackey over Team Raimo by 6.76. Mackey needed every one of Bijan’s 31 to survive Raimo with a quarterback in the red.</p>
+<h4>Biggest blowout</h4>
+<p>Trust The Process over Two Minutemen by 68.2. Bailey scored 122, the fourth-highest number in the league, and lost by SIXTY-EIGHT. Caleb Williams went for 37 for him. Bailey renamed to Two Minutemen and it took Chris about two minutes.</p>
+<h4>Lucky winner</h4>
+<p>TWEAK, won with 106.46. Lowest winning score of the week, a tight end the model hates, and a Monday night sweat. Luck has no boundaries.</p>
+<h4>Tell me how I’m losing</h4>
+<p>Two Minutemen. 121.96. Bailey had the fourth-best score in the league, the highest-scoring player in the league, and lost by 68. Hamburger helper cooked a real dinner and Chris ate it in front of him.</p>
+<h4>Highest scoring Fantasy player of the week</h4>
+<p>Caleb Williams, 37.26, for Bailey. Who lost. Of course he lost. Josh Allen 35.7 and Derrick Henry 35.3 right behind him for men who won.</p>
+<h4>Peter’s Notes 📝</h4>
+<p>HAPPY NEW YEAR. Week 1 is in the books and I need everyone to sit down. Chris Adams scored 190 points. ONE HUNDRED NINETY. The model called his roster top heavy and one hamstring from a eulogy. Every one of those top-heavy pieces went off in the same afternoon. Allen, Gibbs, Watson, McBride, and Parker Washington chipping in 19 from the flex. Chris, I have said unkind things about your process for seven years. I am saying one kind thing now: that is the most points anyone in this league has ever put next to my name in a week 1 column. Enjoy it. Week 2 you play Tana and the model already made you a dog.</p>
+<p>Speaking of the model. The model had me fourteenth. Dead last. Paper king. Draft coward. I told you 140 out of spite and I gave you 146.6. Derrick Henry 35.3. Justin Jefferson, the reach, 31.2. Chris Olave 28.2. I dropped the Packers defense for the Jaguars on Wednesday and the Jaguars gave me 14. That is called managing. I am not apologizing to the software. The software is going to apologize to me in December.</p>
+<p>Charlie renamed the team to The Cokeheads and then put up 154 with a flex play he was nervous about. Jalen Coker, questionable, 33.8. Jeanty 32.7. This is the same man the tape calls forever 8-6. He is 1-0 and scoring like a contender. We have seen this movie. It ends in week 15 with him watching other people finish. Prove me wrong. I would love it.</p>
+<p>Now the sad part. AJ. The champion. Arthur Ermelino started TreVeyon Henderson in the flex. TreVeyon Henderson was OUT. Zero points from a lineup slot on opening weekend, from the reigning champion, against the man who beat me in round one. 87.7. Lowest score in the league. The belt thief did not check the injury report. That is not a belt thief. That is a man who found a belt on the floor. Ja needed 113 to beat you and got there with Saquon scoring 9. Set your lineup, champ.</p>
+<p>Dropick has four quarterbacks and 100 points. He started Lamar over Mahomes and it was the right call by three points and it did not matter because Drake London scored 5.5 and Kelce did all of his scoring after eleven at night. Then he cut Daniel Jones, Ray Davis, and the Browns defense before Monday night was over and picked up Kayshon Boutte, Dalton Schultz, and the Titans defense, which scored NEGATIVE ONE. Coin flip. Heads he churns, tails he churns.</p>
+<p>Mackey won a football game with Kyler Murray scoring negative 0.38. Read that again. His quarterback took points OFF the board and Bijan Robinson put 31 back on and Raimo lost anyway because Ja’Marr Chase, the third pick in the draft, scored 3.2 and Kyle Pitts scored zero. Raimo had Matthew Golden scoring 15.5 on his bench. The bronze factory is 0-1 and the machine is already making excuses.</p>
+<p>Drew Hiboki scored 103 in his first game with Amon-Ra going 28.7 and Jared Goff scoring 16.4 on his bench behind Herbert’s 13.3. Welcome to 0-1, Drew. Everybody starts somewhere. Most people start by checking the bench. Jack is 1-0 with a 19 from the Steelers defense and Tyler Shough scoring 23 on his bench behind Lawrence’s 26. That is called depth. Do not get used to it.</p>
+<p>Tweak. Isaiah Likely, the tight end I put in the reaches at 4.4 a game, scored 27.8. Jonathan Taylor 25.1. He beat Tana, who is the model’s number one team, because Matthew Stafford scored 4.1 and Brock Bowers did not play. Tana added Michael Mayer to cover the hole. Tweak added nothing, which for Tweak is a personal record. The panic addict went a full week without a waiver claim. Somebody check on him.</p>
+<p>The book. The model went 4-3 on picks and favorites went 3-4. It took Chris and the points, it took me and the points, it took Charlie and the points, it took Jack. It lost Tana laying ten, it lost Raimo, and it lost the champion on the moneyline because the champion started a ghost. Week 2 lines are up under Enough Cum. Every game. Read them before you text me.</p>
+<p>GENTLEMEN. Are you 0-1? GOOD. PICK UP THE PHONE. Did your quarterback score negative points and you still won? GOOD. PICK UP THE PHONE and sell before it happens again. Did you start a man who was OUT? GOOD. Put the phone down and open the app. Week 1 does not decide anything. It only tells you who was paying attention. Half of you were not.</p>
+<h4>Sunday Night Football Game of the Week</h4>
+<p>Trust The Process at Model Busters. The 190 walks into the house of the model’s number one team, who just scored 96.5. Chris has never had a team this loud. Tana has never had a model this wrong. Bowers is out again and Stafford has to prove 4.1 was a typo.</p>
+<p>Game line: Model Busters -2</p>
+<p>Pick: Trust The Process +2. The model does not chase. I chase.</p>
+<h4>Now for Peter’s Power Rankings</h4>
+<ol>
+<li>Chris Adams ⬆️ — 190. Nothing else needs to be said. One week. Say the number and walk away.</li>
+<li>Charlie ⬆️ — 154 and a new name. The Cokeheads are real until week 15 says otherwise.</li>
+<li>Pete ⬆️ — 146.6. I am the model now.</li>
+<li>Jack Christensen ⬆️ — 1-0, depth on the bench, a defense that showed up. The tourist bought a house.</li>
+<li>Tana ⬇️ — The model’s number one. The scoreboard’s 0-1. Stafford owes him a week.</li>
+<li>Bailey ⬇️ — 122 in a loss is a good team with a bad draw. The Minutemen will be fine. Probably.</li>
+<li>Ja ⬆️ — Beat the champion with Saquon scoring 9. He wins ugly on purpose.</li>
+<li>Mackey ⬇️ — Won with a negative quarterback. That is a coupon, not a trend.</li>
+<li>Drew Hiboki ⬇️ — 103 and a Goff on the bench. Tall, 0-1, learning.</li>
+<li>Tweak ⬆️ — 1-0 with a 28 from the tight end I mocked. Fine. FINE.</li>
+<li>Raimo ⬇️ — Chase 3.2. Pitts 0. Golden 15.5 on the bench. Bronze factory, week 1 recall.</li>
+<li>Dropick ⬇️ — 100 with four quarterbacks and a defense that scored negative one.</li>
+<li>Pappas ⬇️ — 112 and a 41-point loss. Kenneth Walker went for 34 on Monday night for a team that was already dead. The couch scored, the couch lost.</li>
+<li>AJ ⬇️ — The champion started a ghost. Fourteenth until he opens the injury report.</li>
+</ol>
+<p>Best of luck in week 2, go out there and cum!</p>
 `}
 ];
 const KEYS=["week","date","winners","most","least","close-who","close-blurb","blow-who","blow-blurb","lucky-who","lucky-blurb","lose-who","lose-blurb","potw-who","potw-blurb","notes","snf-who","snf-line","snf-blurb","ranks","sign"];
