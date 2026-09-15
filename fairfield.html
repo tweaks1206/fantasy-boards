@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f3f3f3" />
+  <title>Fairfield Fantasy 2019–2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#f3f3f3; --panel:#ffffff; --line:#d4d4d4; --text:#111111; --muted:#6b6b6b; --gold:#c8102e; --gold-2:#e10600; --red:#c8102e; --green:#111111; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:"IBM Plex Sans",system-ui,sans-serif; background:radial-gradient(900px 400px at 0% 0%,#c8102e14,transparent 50%),var(--bg); color:var(--text); }
+    .wrap { max-width:1180px; margin:0 auto; padding:24px 14px 80px; }
+    .eyebrow { font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); font-weight:600; }
+    h1 { font-family:"Bebas Neue",sans-serif; font-size:clamp(40px,8vw,68px); line-height:.9; margin:6px 0 10px; }
+    h1 span { color:var(--gold); }
+    .lede { color:var(--muted); max-width:740px; line-height:1.55; margin-bottom:18px; }
+    h2 { font-family:"Bebas Neue",sans-serif; font-size:28px; letter-spacing:.04em; }
+    .hint { color:var(--muted); font-size:13px; margin:4px 0 12px; }
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:16px 0 20px; }
+    .stat { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px; }
+    .stat b { display:block; font-family:"Bebas Neue",sans-serif; font-size:28px; color:var(--gold-2); line-height:1; }
+    .stat span { color:var(--muted); font-size:10px; letter-spacing:.08em; text-transform:uppercase; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:14px; }
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    @media(max-width:860px){ .grid2,.stats{grid-template-columns:1fr 1fr;} }
+    table { width:100%; border-collapse:collapse; font-size:12.5px; }
+    .scroll{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch;}
+    .scroll table{width:max-content;min-width:100%;}
+    th { text-align:left; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); padding:7px 5px; border-bottom:1px solid var(--line); cursor:pointer; white-space:nowrap; }
+    td { padding:7px 5px; border-bottom:1px solid #e6e6e6; white-space:nowrap; }
+    tr.champ td { background:#f8e6e8; } tr.podium td { background:#f0f0f0; }
+    .mono { font-family:"IBM Plex Mono",monospace; } .pos{color:var(--green);} .neg{color:var(--red);} .muted{color:var(--muted);}
+    .pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+    .pill{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:600;cursor:pointer;}
+    .pill.on{border-color:var(--gold);color:#fff;background:var(--gold);}
+    .pods{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;}
+    .pod{background:#f7f7f7;border:1px solid var(--line);border-radius:12px;padding:10px;}
+    .pod .yr{font-family:"IBM Plex Mono",monospace;color:var(--gold);font-size:12px;}
+    .pod .c{font-weight:700;margin:3px 0;} .pod .r{font-size:12px;color:var(--muted);line-height:1.4;}
+    .take{color:var(--muted);font-size:14px;line-height:1.65;} .take strong{color:var(--text);}
+    .rpt{border-bottom:1px solid #e6e6e6;padding:12px 0;}
+    .rpt:last-child{border:0;}
+    .rpt h3{font-size:15px;margin-bottom:4px;}
+    .grade{font-family:"IBM Plex Mono",monospace;font-size:22px;color:var(--gold-2);}
+    .tag{display:inline-block;font-size:9px;letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:0 5px;margin-left:4px;color:var(--muted);vertical-align:middle;white-space:nowrap;line-height:1.6;}
+    .scout{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;}
+    .scout .rpt{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fafafa;margin:0;}
+    .scout h3{font-size:13px;margin:0 0 3px;}
+    .scout .grade{font-size:15px;}
+    .scout .take{font-size:12px;line-height:1.35;margin:0;}
+    .issue .tag{font-size:8px;padding:0 4px;}
+    footer{color:var(--muted);font-size:12px;margin-top:8px;}
+    .tabs{display:flex;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0 18px;background:#fff;}
+    .tab{flex:1;border:0;background:#fff;color:var(--muted);padding:14px 12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px;cursor:pointer;}
+    .tab+.tab{border-left:1px solid var(--line);}
+    .tab.on{background:var(--gold);color:#fff;}
+    .view{display:none;} .view.on{display:block;}
+    .mu{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;background:#fafafa;}
+    .mu-teams{font-weight:700;font-size:15px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px;}
+    .mu-teams small{color:var(--muted);font-weight:500;font-size:11px;margin-left:4px;}
+    .mu .at{color:var(--muted);margin:0 6px;font-weight:500;}
+    .mu.fav-away .away,.mu.fav-home .home{color:var(--gold);}
+    .mu-line{font-size:12px;color:var(--muted);margin:5px 0 4px;}
+    .mu-pick{font-size:13px;margin:2px 0;}
+    .mu-why{font-size:13px;color:var(--muted);line-height:1.45;}
+    .mu-res{font-size:12px;margin-top:5px;}
+    .issue{border-left:3px solid var(--gold);padding:4px 0 4px 14px;margin-bottom:22px;}
+    .issue h3{font-family:"Bebas Neue",sans-serif;font-size:26px;letter-spacing:.03em;}
+    .issue .meta{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--gold);margin-bottom:8px;}
+    .issue p{color:#333;line-height:1.65;margin:0 0 10px;font-size:15px;}
+    .issue h4{font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin:14px 0 6px;}
+    .issue ol{margin:0 0 12px 22px;line-height:1.55;}
+    .issue li{margin:2px 0;}
+    .mask{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:20;padding:16px;}
+    .mask.on{display:flex;}
+    .modal{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;width:min(420px,100%);}
+    .modal h3{font-family:"Bebas Neue",sans-serif;font-size:28px;margin-bottom:6px;}
+    .modal input{width:100%;font-size:16px;padding:12px;border:1px solid var(--line);border-radius:10px;margin:10px 0 12px;}
+    .modal button{background:var(--gold);color:#fff;border:0;border-radius:10px;padding:12px 16px;font-weight:700;width:100%;cursor:pointer;}
+    .err{color:var(--red);font-size:13px;min-height:16px;}
+    .field{margin:0 0 12px;}
+    .field label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;font-weight:600;}
+    .field input,.field textarea{width:100%;font-size:16px;padding:10px;border:1px solid var(--line);border-radius:10px;font-family:inherit;background:#fff;}
+    .field textarea{min-height:88px;resize:vertical;line-height:1.45;}
+    .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    @media(max-width:700px){.row3,.row2{grid-template-columns:1fr;}}
+    .desk-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px;}
+    .desk-actions button{border:1px solid var(--line);background:#111;color:#fff;border-radius:999px;padding:10px 14px;font-weight:700;cursor:pointer;}
+    .desk-actions button.ghost{background:#fff;color:#111;}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow" id="pageEyebrow">Fairfield Fantasy · 2019–2026</div>
+  <h1 id="pageTitle">NEUMY <span>REPORT</span></h1>
+  <p class="lede" id="pageLede">Weekly column. Consolation does not exist. Tuesday mornings we add a new issue.</p>
+  <div class="tabs">
+    <button class="tab on" id="tab-neumy" onclick="showView('neumy',this)">Neumy Report</button>
+    <button class="tab" id="tab-book" onclick="showView('book',this)">Enough Cum</button>
+    <button class="tab" id="tab-bible" onclick="showView('bible',this)">League Bible</button>
+    <button class="tab" id="tab-desk" onclick="openDesk(this)">Desk</button>
+  </div>
+
+  <div id="view-neumy" class="view on">
+    <div class="pills" id="weekPills"></div>
+    <section class="card" id="neumyIssue"></section>
+  </div>
+
+  <div id="view-book" class="view">
+    <div class="stats" id="bookStats"></div>
+    <div class="pills" id="bookPills"></div>
+    <section class="card" id="bookCard"></section>
+    <section class="card"><h2>The model's board</h2><p class="hint">Weekly projection per team. Every line on this page is the gap between two of these numbers. Refreshed Tuesdays.</p><div class="scroll"><table id="bookBoard"></table></div></section>
+    <section class="card"><h2>Season schedule</h2><p class="hint">Fourteen weeks. Away at home. Line is the model's number today. Playoffs are weeks 15 to 17, matchups TBD.</p><div class="scroll"><table id="bookSched"></table></div></section>
+  </div>
+
+  <div id="view-bible" class="view">
+    <div class="stats" id="topline"></div>
+    <section class="card"><h2>The rings</h2><p class="hint">Trophy versus the regular season that actually happened.</p><div class="pods" id="pods"></div></section>
+    <section class="card">
+      <h2>Scouting reports</h2>
+      <p class="hint">Names carry tags: champion, runner-up, last place, rookie.</p>
+      <div id="reports"></div>
+    </section>
+    <section class="card"><h2>Career ledger</h2><p class="hint">Click a header to sort. Tags sit on the name.</p><div class="scroll"><table id="career"></table></div></section>
+    <div class="grid2">
+      <section class="card"><h2>Single-season boards</h2><p class="hint">Best and worst years in the dump.</p><div id="records"></div></section>
+      <section class="card"><h2>What it actually says</h2><div class="take" id="takes"></div></section>
+    </div>
+    <div class="grid2">
+      <section class="card"><h2>Last place in Cum</h2><p class="hint">Dead last. How many times you finished at the bottom.</p><div id="cellar"></div></section>
+      <section class="card"><h2>Cumming Droughts</h2><p class="hint">Years played vs trips to the winner’s bracket. No consolation.</p><div id="drought"></div></section>
+    </div>
+    <section class="card">
+      <h2>Seasonal Cum</h2>
+      <p class="hint">Full ESPN line. Finish is playoff standing.</p>
+      <div class="pills" id="yearPills"></div>
+      <div class="scroll"><table><thead id="yearHead"></thead><tbody id="yearBody"></tbody></table></div>
+    </section>
+    <section class="card">
+      <h2>GM grades</h2>
+      <p class="hint">Bottom of the bible on purpose. Score blends win%, playoff rate, titles/finals, scoring, wasted 10-win teams.</p>
+      <div class="scroll"><table id="grades"></table></div>
+    </section>
+    <footer>Closing streaks only (ESPN STRK). 2019–20: 12 teams / 13 games. 2021–25: 14 teams / 14 games. Drew is 2026 tape only.</footer>
+  </div>
+
+  <div id="view-desk" class="view">
+    <section class="card">
+      <h2>Cut this week’s report</h2>
+      <p class="hint">Same skeleton every Tuesday. Fill the blanks, hit Publish. Then Copy for the group chat and paste it raw.</p>
+      <div class="row3">
+        <div class="field"><label>Week</label><input id="f-week" type="number" min="1" max="17" value="1" /></div>
+        <div class="field"><label>Date line</label><input id="f-date" placeholder="Tuesday, Sept 15 2026" /></div>
+        <div class="field"><label>Load saved week</label><input id="f-load" type="number" min="0" max="17" placeholder="0 = issue 0" /></div>
+      </div>
+      <div class="field"><label>This week’s winners (1–7, one per line)</label><textarea id="f-winners" placeholder="Pete&#10;Tana&#10;Ja"></textarea></div>
+      <div class="row2">
+        <div class="field"><label>Most PF this season 😮‍💨 (1–3)</label><textarea id="f-most" placeholder="Pete 1223.72"></textarea></div>
+        <div class="field"><label>Least PF this season 🤮 (1–3)</label><textarea id="f-least" placeholder="Dropick 870.10"></textarea></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Closest game</label><input id="f-close-who" placeholder="Jack @ Jaden: 5.66" /></div>
+        <div class="field"><label>Closest blurb</label><textarea id="f-close-blurb"></textarea></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Biggest blowout</label><input id="f-blow-who" placeholder="Mackey @ Sumner: 49.68" /></div>
+        <div class="field"><label>Blowout blurb</label><textarea id="f-blow-blurb"></textarea></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Lucky winner</label><input id="f-lucky-who" placeholder="Bailey 93 pts W" /></div>
+        <div class="field"><label>Lucky blurb</label><textarea id="f-lucky-blurb"></textarea></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Tell me how I’m losing</label><input id="f-lose-who" placeholder="Chris Adams 139.10 LOSS" /></div>
+        <div class="field"><label>Losing blurb</label><textarea id="f-lose-blurb"></textarea></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Highest scoring player</label><input id="f-potw-who" placeholder="Brock Bowers 12/127/3" /></div>
+        <div class="field"><label>Player blurb</label><textarea id="f-potw-blurb"></textarea></div>
+      </div>
+      <div class="field"><label>Peter’s Notes</label><textarea id="f-notes" style="min-height:160px" placeholder="Gentlemen! ..."></textarea></div>
+      <div class="row2">
+        <div class="field"><label>SNF matchup</label><input id="f-snf-who" placeholder="Arthur (4-5) @ Mackey (6-3)" /></div>
+        <div class="field"><label>Game line + pick</label><input id="f-snf-line" placeholder="Mackey -5.5 BUT MY PICK… AJ MONEYLINE" /></div>
+      </div>
+      <div class="field"><label>SNF blurb</label><textarea id="f-snf-blurb"></textarea></div>
+      <div class="field"><label>Power rankings / tiers</label><textarea id="f-ranks" style="min-height:140px" placeholder="SUPERBOWL FAVORITES:&#10;Pete&#10;Raimo&#10;PLAYOFF CONTENDERS:&#10;Mackey"></textarea></div>
+      <div class="field"><label>Sign-off</label><input id="f-sign" value="Best of luck in week X, go out there and cum!" /></div>
+      <div class="desk-actions">
+        <button onclick="writeDraft()">Write recommended report</button>
+        <button class="ghost" onclick="startFresh()">Start fresh</button>
+        <button class="ghost" onclick="loadWeek()">Load saved week</button>
+      </div>
+      <div class="field"><label>Recommended report — read it, edit it, or toss it</label><textarea id="f-draft" style="min-height:320px" placeholder="Hit Write recommended report after the facts above."></textarea></div>
+      <div class="desk-actions">
+        <button onclick="publishWeek()">Publish this draft</button>
+        <button class="ghost" onclick="copyWeek()">Copy for group chat</button>
+        <button class="ghost" onclick="logoutDesk()">Log out</button>
+      </div>
+      <p class="hint" id="deskStatus">Facts first. Draft second. Edit third. Publish when it sounds like you.</p>
+    </section>
+  </div>
+</div>
+<div class="mask" id="loginMask" onclick="if(event.target.id==='loginMask')this.classList.remove('on')">
+  <div class="modal">
+    <h3>Desk login</h3>
+    <p class="hint">Commish only. Default pin is <span class="mono">neumy</span> — change it after first login if you want.</p>
+    <input id="deskPin" type="password" inputmode="text" placeholder="Password" autocomplete="off" />
+    <div class="err" id="deskErr"></div>
+    <button onclick="tryDesk()">Enter desk</button>
+  </div>
+</div>
+<script>
+const YEARS=[2019,2020,2021,2022,2023,2024,2025];
+const PODIUM={
+2019:{c:"Team Pappas",rec:"6-7",s:"AJs Man Boob's 69",t:"Team Dropick",n:"6-7 champion. Already the brand."},
+2020:{c:"Team Raimo",rec:"8-5",s:"TheWiseBleeders 69",t:"Super Bowl Mack attack",n:"Only 13-game title."},
+2021:{c:"TheWiseBleeders 69",rec:"8-6",s:"Chokin the Belichicken",t:"Cream Pies LLC",n:"Tana's one ring. Then the rebrands."},
+2022:{c:"Cream Pies LLC",rec:"8-6",s:"Booty Bandits",t:"Team Sa Quads",n:"11-3 Bandits lost the final."},
+2023:{c:"Team Mackey",rec:"7-7",s:"Team Pappas",t:"Butter Cuts",n:"Mackey was 4-10 two years earlier."},
+2024:{c:"Team Ermesquid",rec:"7-7",s:"Booty Bandits",t:"Team Raimo",n:"Dropick. 13th the next fall."},
+2025:{c:"Hansen's Most Wanted",rec:"8-6",s:"Cream Pies LLC",t:"Team Raimo",n:"11th in PF. Beat the 1893-point slayer."}
+};
+const S={
+2019:[[1,"Team Pappas","Michael Pappas","6-7-0",1535.96,1550.46,118.2,119.3,-1.1,"4-3-0","2-4-0","W3",11],[2,"AJs Man Boob's 69","Mike Tana","7-6-0",1646.66,1491.92,126.7,114.8,11.9,"3-4-0","4-2-0","L2",20],[3,"Team Dropick","Jackson Dropick","7-6-0",1477.94,1467.44,113.7,112.9,0.8,"3-3-0","4-3-0","W2",11],[4,"Cheap Hooche","Chris Adams","6-7-0",1448.42,1601.36,111.4,123.2,-11.8,"3-4-0","3-3-0","W2",17],[5,"Super Bowl Mack attack","Matt Mackin","9-4-0",1634.42,1390.86,125.7,107.0,18.7,"4-1-0","5-3-0","W2",9],[6,"Team Mackey","Alex Mackey","7-6-0",1570.3,1588.64,120.8,122.2,-1.4,"3-4-0","4-2-0","L2",12],[7,"Hot Chubb Time Machine","Ryguy H","7-6-0",1652.92,1488.42,127.1,114.5,12.7,"3-4-0","4-2-0","L1",22],[8,"Team Raimo","Joe Raimondi","9-4-0",1523.74,1407.62,117.2,108.3,8.9,"2-3-0","7-1-0","W1",14],[9,"Team Miicklo","Marty Racanelli","5-8-0",1462.46,1458.34,112.5,112.2,0.3,"1-6-0","4-2-0","L2",15],[10,"Bandits Only","Peter Neumann","5-8-0",1348.92,1498.16,103.8,115.2,-11.5,"2-5-0","3-3-0","W1",20],[11,"Big Clits","Charles Cerami","4-9-0",1366.38,1565.54,105.1,120.4,-15.3,"3-4-0","1-5-0","L1",55],[12,"Mexican Muckers","Arthur Ermelino","6-7-0",1427.12,1586.48,109.8,122.0,-12.3,"2-4-0","4-3-0","L3",19]],
+2020:[[1,"Team Raimo","Joe Raimondi","8-5-0",1471.2,1422.08,113.2,109.4,3.8,"2-3-0","6-2-0","W1",36],[2,"TheWiseBleeders 69","Mike Tana","9-4-0",1425.44,1340.32,109.6,103.1,6.5,"5-2-0","4-2-0","L1",22],[3,"Super Bowl Mack attack","Matt Mackin","9-4-0",1536.82,1313.42,118.2,101.0,17.2,"4-1-0","5-3-0","W2",7],[4,"Team Mackey","Alex Mackey","8-5-0",1568.42,1387.88,120.6,106.8,13.9,"5-2-0","3-3-0","L1",23],[5,"Team Miicklo","Marty Racanelli","8-5-0",1322.46,1318,101.7,101.4,0.3,"5-2-0","3-3-0","W1",11],[6,"Bandits","Peter Neumann","6-7-0",1345.58,1285.78,103.5,98.9,4.6,"3-4-0","3-3-0","L1",33],[7,"Bidens Baked","Chris Adams","6-7-0",1345.64,1364.22,103.5,104.9,-1.4,"5-2-0","1-5-0","W1",35],[8,"Full Send","Charles Cerami","6-7-0",1316.8,1312.18,101.3,100.9,0.4,"2-5-0","4-2-0","W4",60],[9,"Team Dropick","Jackson Dropick","4-9-0",1234.4,1347.34,95.0,103.6,-8.7,"0-6-0","4-3-0","L1",14],[10,"Team Salameno","Jason Salameno","4-9-0",1212.9,1466.68,93.3,112.8,-19.5,"4-3-0","0-6-0","L5",17],[11,"Team Pappas","Michael Pappas","5-8-0",1346.78,1497.92,103.6,115.2,-11.6,"2-5-0","3-3-0","W1",17],[12,"Ringwood Milfs","Arthur Ermelino","5-8-0",1315.48,1386.1,101.2,106.6,-5.4,"2-4-0","3-4-0","L2",13]],
+2021:[[1,"TheWiseBleeders 69","Mike Tana","8-6-0",1452.24,1351.28,103.7,96.5,7.2,"5-3-0","3-3-0","L1",25],[2,"Chokin the Belichicken","Charlie Sumner","8-6-0",1367.48,1302.74,97.7,93.1,4.6,"2-4-0","6-2-0","W2",36],[3,"Team Cream Pies LLC","Jaden Stefanski","10-4-0",1536.18,1417.5,109.7,101.3,8.5,"5-2-0","5-2-0","W6",7],[4,"Superbowl Mackin","Matt Mackin","8-6-0",1356.86,1366.44,96.9,97.6,-0.7,"4-3-0","4-3-0","W2",18],[5,"Booty Bandits","Peter Neumann","9-5-0",1492.06,1303.2,106.6,93.1,13.5,"4-3-0","5-2-0","W1",31],[6,"Ringwood Cougars","Arthur Ermelino","8-6-0",1519.9,1444.9,108.6,103.2,5.4,"4-2-0","4-4-0","L3",28],[7,"Team Salameno","Jason Salameno","7-7-0",1420.12,1361,101.4,97.2,4.2,"5-2-0","2-5-0","L2",23],[8,"Team Pappas","Michael Pappas","9-5-0",1558.66,1558.74,111.3,111.3,0,"3-4-0","6-1-0","W1",8],[9,"Team Raimo","Joe Raimondi","6-8-0",1374.18,1339.74,98.2,95.7,2.5,"3-4-0","3-4-0","L1",27],[10,"How's Your Box","Chris Adams","5-9-0",1433.8,1594,102.4,113.9,-11.4,"2-6-0","3-3-0","L1",23],[11,"Team Dropick","Jackson Dropick","7-7-0",1387.4,1430.26,99.1,102.2,-3.1,"4-3-0","3-4-0","W2",11],[12,"Full Send","Charles Cerami","6-8-0",1365.22,1449.1,97.5,103.5,-6,"2-4-0","4-4-0","L2",35],[13,"Team Miicklo","Marty Racanelli","3-11-0",1325.92,1478.82,94.7,105.6,-10.9,"2-5-0","1-6-0","W1",11],[14,"Team Mackey","Alex Mackey","4-10-0",1256.16,1448.46,89.7,103.5,-13.7,"2-6-0","2-4-0","L6",19]],
+2022:[[1,"Team Cream Pies LLC","Jaden Stefanski","8-6-0",1374.22,1315.78,98.2,94,4.2,"4-4-0","4-2-0","L2",5],[2,"Booty Bandits","Peter Neumann","11-3-0",1701.1,1408.28,121.5,100.6,20.9,"4-3-0","7-0-0","W6",47],[3,"Team Sa Quads","Joe Raimondi","8-6-0",1400.12,1376.3,100,98.3,1.7,"7-1-0","1-5-0","W1",21],[4,"Chokin the Belichicken","Charlie Sumner","10-4-0",1568.7,1351.32,112,96.5,15.5,"3-3-0","7-1-0","W5",20],[5,"Team Salameno","Jason Salameno","7-7-0",1157.68,1270.5,82.7,90.8,-8.1,"4-3-0","3-4-0","L1",15],[6,"Team Pappas","Michael Pappas","9-5-0",1488.72,1375.42,106.3,98.2,8.1,"5-2-0","4-3-0","L1",9],[7,"CPU Team 1","CPU","7-7-0",1496.66,1398.42,106.9,99.9,7,"3-5-0","4-2-0","L1",15],[8,"Bateman Begins","Chris Adams","8-6-0",1442.04,1283.24,103,91.7,11.3,"4-2-0","4-4-0","W1",23],[9,"Team Mackey","Alex Mackey","6-8-0",1322.84,1329.4,94.5,95,-0.5,"3-4-0","3-4-0","L1",19],[10,"Team Tanamana","Mike Tana","6-8-0",1411.42,1452.28,100.8,103.7,-2.9,"4-3-0","2-5-0","W4",32],[11,"Team Ermesquid","Jackson Dropick","6-8-0",1190.4,1482.9,85,105.9,-20.9,"2-4-0","4-4-0","W1",20],[12,"Hansen's Most Wanted","Arthur Ermelino","5-9-0",1261.44,1324.6,90.1,94.6,-4.5,"2-5-0","3-4-0","W1",20],[13,"Superbowl Mackin","Matt Mackin","5-9-0",1180.12,1370.62,84.3,97.9,-13.6,"2-5-0","3-4-0","L5",4],[14,"King Tweak","Charles Cerami","2-12-0",1174.36,1430.76,83.9,102.2,-18.3,"1-6-0","1-6-0","L12",38]],
+2023:[[1,"Team Mackey","Alex Mackey","7-7-0",1529.36,1440.42,109.2,102.9,6.4,"2-5-0","5-2-0","W1",27],[2,"Team Pappas","Michael Pappas","8-6-0",1309.44,1292.14,93.5,92.3,1.2,"3-4-0","5-2-0","L4",5],[3,"Butter Cuts","Jason Salameno","7-7-0",1408.28,1490.34,100.6,106.5,-5.9,"4-3-0","3-4-0","W1",19],[4,"PB can't drink","Brian Kelly","7-7-0",1412.82,1362.44,100.9,97.3,3.6,"4-4-0","3-3-0","L1",20],[5,"Team Mikule","Bailey Mikule","9-5-0",1469.42,1383.4,105,98.8,6.1,"5-2-0","4-3-0","L1",10],[6,"Chokin the Belichicken","Charlie Sumner","8-6-0",1428.48,1405.72,102,100.4,1.6,"4-2-0","4-4-0","W1",21],[7,"Team Ermesquid","Jackson Dropick","10-4-0",1587.06,1358.88,113.4,97.1,16.3,"4-2-0","6-2-0","L1",12],[8,"Team Tanamana","Mike Tana","8-6-0",1384.88,1366.66,98.9,97.6,1.3,"5-2-0","3-4-0","W1",22],[9,"Team Cream Pies LLC","Jaden Stefanski","6-8-0",1375.24,1431.82,98.2,102.3,-4,"4-4-0","2-4-0","W2",7],[10,"King Tweak","Charles Cerami","5-9-0",1413.68,1454.42,101,103.9,-2.9,"1-6-0","4-3-0","L1",19],[11,"Booty Bandits","Peter Neumann","7-7-0",1329.76,1458.58,95,104.2,-9.2,"4-3-0","3-4-0","W3",23],[12,"Team Raimo","Joe Raimondi","6-8-0",1307.48,1382.58,93.4,98.8,-5.4,"4-4-0","2-4-0","L5",21],[13,"Team Achilles","Chris Adams","6-8-0",1490.66,1518.1,106.5,108.4,-2,"3-3-0","3-5-0","W4",12],[14,"Hansen's Most Wanted","Arthur Ermelino","4-10-0",1325.58,1426.64,94.7,101.9,-7.2,"2-5-0","2-5-0","L2",19]],
+2024:[[1,"Team Ermesquid","Jackson Dropick","7-7-0",1573.82,1562.66,112.4,111.6,0.8,"3-3-0","4-4-0","L1",22],[2,"Booty Bandits","Peter Neumann","7-7-0",1668.86,1725.24,119.2,123.2,-4,"4-3-0","3-4-0","L1",30],[3,"Team Raimo","Joe Raimondi","10-4-0",1765.8,1471.5,126.1,105.1,21,"8-0-0","2-4-0","W1",24],[4,"Tweak","Charles Cerami","9-5-0",1601.18,1521.36,114.4,108.7,5.7,"5-2-0","4-3-0","L1",31],[5,"Dont Go Chase'n Waterfalls","Brian Kelly","7-7-0",1631.6,1538.16,116.5,109.9,6.7,"5-3-0","2-4-0","W1",10],[6,"Hansen's Most Wanted","Arthur Ermelino","10-4-0",1593.04,1492.28,113.8,106.6,7.2,"5-2-0","5-2-0","W2",29],[7,"Team Tanamana","Mike Tana","8-6-0",1598.78,1563.68,114.2,111.7,2.5,"3-4-0","5-2-0","W2",17],[8,"Maye Day","Bailey Mikule","5-9-0",1514.98,1662.22,108.2,118.7,-10.5,"1-6-0","4-3-0","L5",12],[9,"Trust the Process","Chris Adams","6-8-0",1648.8,1640.98,117.8,117.2,0.6,"3-3-0","3-5-0","W1",13],[10,"Butter Cuts","Jason Salameno","6-8-0",1582.3,1653.4,113,118.1,-5.1,"1-6-0","5-2-0","W3",13],[11,"Chokin the Belichicken","Charlie Sumner","7-7-0",1552.92,1472.42,110.9,105.2,5.8,"4-2-0","3-5-0","W4",18],[12,"Team Mackey","Alex Mackey","7-7-0",1523.66,1549.48,108.8,110.7,-1.8,"3-4-0","4-3-0","L2",17],[13,"Team Cream Pies LLC","Jaden Stefanski","5-9-0",1476.48,1591.82,105.5,113.7,-8.2,"2-6-0","3-3-0","L3",6],[14,"Team Pappas","Michael Pappas","4-10-0",1349.2,1636.22,96.4,116.9,-20.5,"2-5-0","2-5-0","L3",5]],
+2025:[[1,"Hansen's Most Wanted","Arthur Ermelino","8-6-0",1452.68,1498.1,103.8,107,-3.2,"3-4-0","5-2-0","W2",17],[2,"Team Cream Pies LLC","Jaden Stefanski","7-7-0",1516.42,1561.74,108.3,111.6,-3.2,"4-4-0","3-3-0","L2",15],[3,"Team Raimo","Joe Raimondi","11-3-0",1684.32,1428.48,120.3,102,18.3,"6-2-0","5-1-0","W4",18],[4,"Team Mackey","Alex Mackey","9-5-0",1608.56,1484.22,114.9,106,8.9,"4-3-0","5-2-0","L1",25],[5,"Trust the Process","Chris Adams","7-7-0",1525.92,1457.9,109,104.1,4.9,"2-4-0","5-3-0","W4",12],[6,"Chokin the Belichicken","Charlie Sumner","8-6-0",1624.36,1481.64,116,105.8,10.2,"2-4-0","6-2-0","L1",27],[7,"Booty Bandits","Peter Neumann","10-4-0",1893.04,1510.06,135.2,107.9,27.4,"3-4-0","7-0-0","W1",22],[8,"Jack's Scary Team","Jack Christensen","6-8-0",1540.8,1533.6,110.1,109.5,0.5,"3-4-0","3-4-0","L4",5],[9,"Jackin' Goff","Bailey Mikule","5-9-0",1433.46,1560.9,102.4,111.5,-9.1,"3-4-0","2-5-0","L1",13],[10,"Model Busters","Mike Tana","6-8-0",1447.86,1639.92,103.4,117.1,-13.7,"3-4-0","3-4-0","W1",14],[11,"Achane Reaction","Brian Kelly","6-8-0",1574.24,1700.74,112.4,121.5,-9,"3-5-0","3-3-0","L4",14],[12,"TWEAK","Charles Cerami","5-9-0",1533.2,1655.86,109.5,118.3,-8.8,"2-5-0","3-4-0","L5",22],[13,"Team Ermesquid","Jackson Dropick","7-7-0",1474.66,1571.88,105.3,112.3,-6.9,"1-5-0","6-2-0","W2",23],[14,"Team Pappas","Michael Pappas","3-11-0",1467.04,1691.52,104.8,120.8,-16,"1-6-0","2-5-0","W1",5]]
+};
+function parseRec(s){const[w,l,t]=s.split("-").map(Number);return{w,l,t:t||0};}
+const ROWS=[];
+YEARS.forEach(y=>S[y].forEach(r=>ROWS.push({year:y,fin:r[0],team:r[1],owner:r[2],rec:r[3],...parseRec(r[3]),pf:r[4],pa:r[5],pfg:r[6],pag:r[7],diff:r[8],home:r[9],away:r[10],strk:r[11],moves:r[12]})));
+function career(){
+  const map={};
+  ROWS.forEach(r=>{
+    if(r.owner==="CPU")return;
+    const c=map[r.owner]||(map[r.owner]={owner:r.owner,seasons:0,w:0,l:0,t:0,pf:0,pa:0,moves:0,titles:0,seconds:0,thirds:0,fin:0,hw:0,hl:0,aw:0,al:0,names:new Set()});
+    c.seasons++;c.w+=r.w;c.l+=r.l;c.t+=r.t;c.pf+=r.pf;c.pa+=r.pa;c.moves+=r.moves;c.fin+=r.fin;c.names.add(r.team);
+    if(r.fin===1)c.titles++; if(r.fin===2)c.seconds++; if(r.fin===3)c.thirds++;
+    const h=parseRec(r.home),a=parseRec(r.away); c.hw+=h.w;c.hl+=h.l;c.aw+=a.w;c.al+=a.l;
+  });
+  return Object.values(map).map(c=>({...c,pct:(c.w+.5*c.t)/(c.w+c.l+c.t),pfg:c.pf/(c.w+c.l+c.t),diff:c.pf-c.pa,avgFin:c.fin/c.seasons,names:[...c.names].join(" / ")})).sort((a,b)=>a.avgFin-b.avgFin||b.pct-a.pct);
+}
+const CAREER=career();
+CAREER.push({owner:"Drew Hiboki",seasons:0,w:0,l:0,t:0,pf:0,pa:0,moves:0,titles:0,seconds:0,thirds:0,hw:0,hl:0,aw:0,al:0,pct:0,pfg:0,diff:0,avgFin:99,names:"2026 rookie · 7-foot"});
+const LAST={};
+YEARS.forEach(y=>{
+  const rows=S[y];
+  const bottom=Math.max(...rows.map(r=>r[0]));
+  rows.filter(r=>r[0]===bottom).forEach(r=>{LAST[r[2]]=(LAST[r[2]]||0)+1;});
+});
+function tagList(owner){
+  const c=CAREER.find(x=>x.owner===owner);
+  const t=[];
+  if(!c) return t;
+  if(!c.seasons) t.push("rookie");
+  if(c.titles===1) t.push("champion");
+  else if(c.titles>1) t.push(c.titles+"x champion");
+  if(c.seconds===1) t.push("runner-up");
+  else if(c.seconds>1) t.push(c.seconds+"x runner-up");
+  if(c.thirds>=2) t.push(c.thirds+"x bronze");
+  const lp=LAST[owner]||0;
+  if(lp===1) t.push("last place");
+  if(lp>=2) t.push(lp+"x last place");
+  return t;
+}
+function tagHtml(owner,inline){
+  let t=tagList(owner);
+  if(inline && t.some(x=>x.indexOf("champion")>=0)) t=t.filter(x=>x.indexOf("last place")<0);
+  return t.map(x=>`<span class="tag">${x}</span>`).join("");
+}
+const ALIAS=[
+  ["Peter Neumann",["Peter Neumann","Booty Bandits","The Bandit","Bandits","Pete"]],
+  ["Arthur Ermelino",["Arthur Ermelino","Hansen's Most Wanted","AJ"]],
+  ["Joe Raimondi",["Joe Raimondi","Team Raimo","Raimo"]],
+  ["Jaden Stefanski",["Jaden Stefanski","Cream Pies","CreamPies","Creampie","JA"]],
+  ["Alex Mackey",["Alex Mackey","Mackey"]],
+  ["Jackson Dropick",["Jackson Dropick","DROPICK","Dropick"]],
+  ["Michael Pappas",["Michael Pappas","Pappas"]],
+  ["Charles Cerami",["Charles Cerami","Cerami","TWEAK","Tweak","Chuck"]],
+  ["Mike Tana",["Mike Tana","Tanamana","Tana"]],
+  ["Charlie Sumner",["Charlie Sumner","Sumner","Sumna"]],
+  ["Chris Adams",["Chris Adams"]],
+  ["Brian Kelly",["Brian Kelly","BK"]],
+  ["Bailey Mikule",["Bailey Mikule","Bailey"]],
+  ["Jack Christensen",["Jack Christensen","J Christ"]],
+  ["Drew Hiboki",["Drew Hiboki"]]
+];
+function stampTags(html){
+  let out=html;
+  const jobs=[];
+  ALIAS.forEach(([owner,names],oi)=>{
+    const chips=tagHtml(owner,true);
+    if(!chips) return;
+    names.forEach(n=>jobs.push({n,chips,oi,len:n.length}));
+  });
+  jobs.sort((a,b)=>b.len-a.len);
+  jobs.forEach((j,i)=>{
+    const re=new RegExp("\\b"+j.n.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\$&")+"\\b(?!'s)","g");
+    out=out.replace(re,"@@O"+j.oi+"@@"+j.n+"@@E@@");
+  });
+  const seen={};
+  return out.replace(/@@O(\d+)@@([\s\S]*?)@@E@@/g,(_,id,name)=>{
+    const j=jobs.find(x=>String(x.oi)===id);
+    const chips=seen[id]?"":(seen[id]=1,j?j.chips:"");
+    return "<strong>"+name+"</strong>"+chips;
+  });
+}
+const PLAYOFFS={
+  2019:["Michael Pappas","Mike Tana","Jackson Dropick","Chris Adams","Matt Mackin","Alex Mackey","Ryguy H","Joe Raimondi"],
+  2020:["Charles Cerami","Matt Mackin","Marty Racanelli","Joe Raimondi","Chris Adams","Alex Mackey","Peter Neumann","Mike Tana"],
+  2021:["Jason Salameno","Jaden Stefanski","Mike Tana","Arthur Ermelino","Charlie Sumner","Peter Neumann","Matt Mackin","Michael Pappas"],
+  2022:["Jason Salameno","Peter Neumann","Joe Raimondi","Chris Adams","Jaden Stefanski","Michael Pappas","CPU","Charlie Sumner"],
+  2023:["Jason Salameno","Jackson Dropick","Michael Pappas","Mike Tana","Alex Mackey","Charlie Sumner","Brian Kelly","Bailey Mikule"],
+  2024:["Joe Raimondi","Peter Neumann","Mike Tana","Brian Kelly","Charles Cerami","Jackson Dropick","Arthur Ermelino"],
+  2025:["Joe Raimondi","Peter Neumann","Alex Mackey","Charlie Sumner","Arthur Ermelino","Chris Adams","Jaden Stefanski"]
+};
+const FINALS={
+  2019:["Michael Pappas","Mike Tana"],
+  2020:["Joe Raimondi","Mike Tana"],
+  2021:["Mike Tana","Charlie Sumner"],
+  2022:["Jaden Stefanski","Peter Neumann"],
+  2023:["Alex Mackey","Michael Pappas"],
+  2024:["Jackson Dropick","Peter Neumann"],
+  2025:["Arthur Ermelino","Jaden Stefanski"]
+};
+function playoffStats(owner){
+  const yrs=YEARS.filter(y=>S[y].some(r=>r[2]===owner));
+  const made=yrs.filter(y=>(PLAYOFFS[y]||[]).includes(owner));
+  const finals=yrs.filter(y=>(FINALS[y]||[]).includes(owner));
+  const titles=yrs.filter(y=>FINALS[y]&&FINALS[y][0]===owner);
+  return {yrs:yrs.length,made:made.length,finals:finals.length,titles:titles.length,missed:yrs.length-made.length,rate:made.length/Math.max(1,yrs.length)};
+}
+function gmScore(c){
+  const p=playoffStats(c.owner);
+  const choke=ROWS.filter(r=>r.owner===c.owner && r.w>=10 && p && !(PLAYOFFS[r.year]||[]).includes(c.owner)).length;
+  // Bandits 2025 made playoffs actually. Choke = 10+ wins and lost first round or missed.
+  const earlyDeath=ROWS.filter(r=>r.owner===c.owner && r.w>=10 && (PLAYOFFS[r.year]||[]).includes(c.owner) && r.fin>2).length;
+  const winPart=c.pct*30;
+  const poPart=p.rate*25;
+  const ringPart=Math.min(25,p.titles*12+p.finals*6);
+  const scorePart=Math.min(10,Math.max(0,(c.pfg-95)/4));
+  const chokePart=Math.max(0,10-earlyDeath*4-choke*5);
+  return Math.round((winPart+poPart+ringPart+scorePart+chokePart)*10)/10;
+}
+const ARCH={
+"Peter Neumann":{tag:"Paper king",do:"You score like a god and finish like a eunuch. 1,893 points. 10-4. 7-0 on the road. First-round funeral. Two finals, zero rings. The regular season is your girlfriend. The playoffs will not text back. Win ONE dirty October game or keep collecting participation ribbons and calling them Super Bowls."},
+"Arthur Ermelino":{tag:"Belt thief",do:"You lifted it 11th in PF. That is not a dynasty. That is a mugging. Three cellar finishes and one stolen belt. Stay mid, get hot in week 15, and pray the 1,893-point virgin draws you again. Repeat-fail and you are 2019 AJ with jewelry."},
+"Joe Raimondi":{tag:"Bronze factory",do:"11-3. Bye. Bronze. Again. You treat the bye like a nap after bad sex. 2020 ring, then a bronze factory. Cash one of these byes or we list you under participation trophies with better fonts. The model loves you. The bracket does not."},
+"Jaden Stefanski":{tag:"Assassin",do:"You murder seasons and then auto-draft your own. 2022 champ. 2025 you sent 1,893 points home in round one and still do not have back-to-back anything. Killer, not a dynasty. Keep taking the ugly matchup. Auto-draft again and we put you in Cumming Droughts for sport."},
+"Alex Mackey":{tag:"Silent killer",do:"4-10, then a 7-7 title. You win when nobody is horny for your team. Stay boring. The second you chase last year’s hero RB you are 12th again. Quiet is the only personality that has ever paid you. Do not become interesting."},
+"Jackson Dropick":{tag:"Coin flip",do:"Champ. Then 13th. 10-4 dumped as the 1-seed. You are a coin with a God complex. ESPN loves your board. The model does not. Lock a floor or lean into chaos. The middle is where you get bent over and thanked for the memories."},
+"Michael Pappas":{tag:"Founding corpse",do:"First champ. Now 3-11 with five adds a year. That is not a process. That is a coma. You have a ring and a couch. Spend two nights on the wire or hand the keys to someone with a pulse. Founding father of last place."},
+"Charles Cerami":{tag:"Panic addict",do:"60 moves. L12. 2-12. You treat the waiver wire like a dating app and still go home alone. Cap it at 15 adds. Draft a QB and stop calling volatility a brand. TWEAK is not grinding. TWEAK is sweating. 2024 was 9-5. Remember that guy. Bury the other one."},
+"Mike Tana":{tag:"Rebrand addict",do:"The 69-era actually came. Model Busters did not. You have a ring, two runner-ups, and a new team name every August like a man who thinks a haircut will save the marriage. Pick a name. Pick a draft. Stop launching a startup every Labor Day."},
+"Charlie Sumner":{tag:"Forever 8-6",do:"2021 finalist. Always hovering. Never finishing. You put up 1,624 and leave empty. Boston apartment, cute regular seasons, zero belts. Stack weeks 15-16 or keep being the nice guy who watches other people finish."},
+"Chris Adams":{tag:"Process corpse",do:"Six names in seven years. Trust the Process asked for patience and paid points against. You skipped RBs and still needed a midseason back. The process is a eulogy until you stack a boring backfield. Jets energy. Mets energy. Soft."},
+"Brian Kelly":{tag:"Empty calories",do:"You put up a buffet and finish in the mud. 1,574 PF, minus-9, 11th. Boom WRs, no spine. Preseason #1 once, then 0-2 and a disappearing act. Trade a pretty WR for an ugly RB2 or keep scoring 91 and calling it respect."},
+"Bailey Mikule":{tag:"Hamburger helper",do:"9-5 as a rookie. Then 5-9. Then 5-9. The league learned you. Hamburger helper Mondays. Fenway tequila. Flashy names, no spine. South Boston drafted two thoughtful teams once. Yours slid. Be interesting or stay the punchline."},
+"Jack Christensen":{tag:"Tourist",do:"6-8. Five adds. Rookie year treated like a group chat. You were one healthy week from being a problem and you chose vacation. Check waivers on Wednesday or stay furniture. Drew is 7 foot and still might outwork you."},
+"Drew Hiboki":{tag:"7-foot tourist",do:"No tape. Tallest man in the league. Softest golf game in the league. You cannot dunk on a waiver wire. Height is not FAAB. You get the Jack special: five adds and a ribbon unless you open ESPN. Prove it week 1 or you are a tall tourist."}
+};
+function letter(s){return s>=88?"A":s>=80?"B+":s>=74?"B":s>=68?"C+":s>=60?"C":s>=50?"D":"F";}
+
+document.getElementById("topline").innerHTML=[["7","Different champs"],["0","Repeats"],[Math.max(...ROWS.map(r=>r.pf)).toFixed(0),"Single-season PF"],[Math.max(...ROWS.map(r=>r.moves)),"Moves in one year"]].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+document.getElementById("pods").innerHTML=YEARS.map(y=>{const p=PODIUM[y];return `<div class="pod"><div class="yr">${y}</div><div class="c">🏆 ${p.c}</div><div class="r">RS ${p.rec} · 2nd ${p.s}<br>3rd ${p.t}<br>${p.n}</div></div>`;}).join("");
+let cSort="avgFin",cDir=1;
+function drawCareer(){
+  const rows=[...CAREER].sort((a,b)=>{const x=a[cSort],y=b[cSort];return (typeof x==="string"?x.localeCompare(y):(x-y))*cDir;});
+  const th=(k,l)=>`<th onclick="cSort='${k}';cDir=-cDir;drawCareer()">${l}</th>`;
+  document.getElementById("career").innerHTML=`<thead><tr>${th("owner","Owner")}<th>AKA</th>${th("seasons","Yrs")}${th("w","W-L")}${th("pct","Pct")}${th("pf","PF")}${th("pa","PA")}${th("diff","Diff")}${th("pfg","PF/G")}${th("titles","1st")}${th("seconds","2nd")}${th("thirds","3rd")}${th("avgFin","Avg fin")}${th("moves","Moves")}<th>Home</th><th>Away</th></tr></thead><tbody>`+rows.map(c=>`<tr><td><strong>${c.owner}</strong> ${tagHtml(c.owner)}</td><td class="muted">${c.names}</td><td class="mono">${c.seasons}</td><td class="mono">${c.w}-${c.l}</td><td class="mono">${c.pct.toFixed(3)}</td><td class="mono">${c.pf.toFixed(0)}</td><td class="mono">${c.pa.toFixed(0)}</td><td class="mono ${c.diff>=0?"pos":"neg"}">${c.diff>=0?"+":""}${c.diff.toFixed(0)}</td><td class="mono">${c.pfg.toFixed(1)}</td><td class="mono">${c.titles||"—"}</td><td class="mono">${c.seconds||"—"}</td><td class="mono">${c.thirds||"—"}</td><td class="mono">${c.avgFin.toFixed(1)}</td><td class="mono">${c.moves}</td><td class="mono">${c.hw}-${c.hl}</td><td class="mono">${c.aw}-${c.al}</td></tr>`).join("")+"</tbody>";
+}
+drawCareer();
+(function drawGrades(){
+  const active=S[2025].map(r=>r[2]).concat(["Drew Hiboki"]);
+  const rows=CAREER.filter(c=>active.includes(c.owner)).map(c=>{
+    const p=playoffStats(c.owner);
+    const s=c.seasons?gmScore(c):0;
+    return {...c,...p,score:s,letter:c.seasons?letter(s):"INC"};
+  }).sort((a,b)=>b.score-a.score);
+  document.getElementById("grades").innerHTML=`<thead><tr><th>Rank</th><th>Manager</th><th>Grade</th><th>Score</th><th>Playoffs</th><th>Finals</th><th>Titles</th><th>Career</th><th>Label</th></tr></thead><tbody>`+
+  rows.map((c,i)=>{
+    const a=ARCH[c.owner]||{tag:"—"};
+    return `<tr class="${i===0?"champ":i===rows.length-1?"":""}"><td class="mono">${i+1}</td><td><strong>${c.owner}</strong></td><td class="grade">${c.letter}</td><td class="mono">${c.score}</td><td class="mono">${c.made}/${c.yrs} (${Math.round(c.rate*100)}%)</td><td class="mono">${c.finals}</td><td class="mono">${c.titles}</td><td class="mono">${c.w}-${c.l} · ${c.pfg.toFixed(1)} PF/G</td><td><span class="tag">${a.tag}</span></td></tr>`;
+  }).join("")+"</tbody>";
+  const best=rows[0], worst=rows[rows.length-1];
+  document.getElementById("reports").innerHTML = `<div class="scout">`+rows.map(c=>{
+    const a=ARCH[c.owner]||{tag:"Role player",do:"Make the playoffs once."};
+    return `<div class="rpt"><h3>${c.owner} <span class="grade">${c.letter}</span></h3>
+      <div>${tagHtml(c.owner)}</div>
+      <div class="take">${a.do}</div></div>`;
+  }).join("")+`</div>`;
+})();
+function board(title,list){return `<div style="margin:0 0 14px"><div style="color:var(--gold-2);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">${title}</div>${list.slice(0,4).map((r,i)=>`<div style="font-size:13px;margin:3px 0"><span class="mono muted">${i+1}.</span> ${r.year} <strong>${r.team}</strong> <span class="muted">${r.owner.split(" ").pop()}</span> · <span class="mono">${r.val}</span></div>`).join("")}</div>`;}
+document.getElementById("records").innerHTML=[
+board("Highest PF",[...ROWS].sort((a,b)=>b.pf-a.pf).map(r=>({...r,val:r.pf.toFixed(1)}))),
+board("Lowest PF",[...ROWS].sort((a,b)=>a.pf-b.pf).map(r=>({...r,val:r.pf.toFixed(1)}))),
+board("Best diff",[...ROWS].sort((a,b)=>b.diff-a.diff).map(r=>({...r,val:(r.diff>0?"+":"")+r.diff.toFixed(1)}))),
+board("Worst diff",[...ROWS].sort((a,b)=>a.diff-b.diff).map(r=>({...r,val:r.diff.toFixed(1)}))),
+board("Most wins",[...ROWS].sort((a,b)=>b.w-a.w||b.pf-a.pf).map(r=>({...r,val:r.rec}))),
+board("Most moves",[...ROWS].sort((a,b)=>b.moves-a.moves).map(r=>({...r,val:r.moves+" moves"}))),
+board("Closing W streak",[...ROWS].filter(r=>r.strk[0]==="W").sort((a,b)=>parseInt(b.strk.slice(1))-parseInt(a.strk.slice(1))).map(r=>({...r,val:r.strk}))),
+board("Closing L streak",[...ROWS].filter(r=>r.strk[0]==="L").sort((a,b)=>parseInt(b.strk.slice(1))-parseInt(a.strk.slice(1))).map(r=>({...r,val:r.strk})))
+].join("");
+document.getElementById("cellar").innerHTML=Object.entries(LAST).sort((a,b)=>b[1]-a[1]).map(([o,n])=>`<div style="margin:6px 0">${o} ${tagHtml(o)} · <span class="mono">${n}× last</span></div>`).join("")||"—";
+document.getElementById("drought").innerHTML=CAREER.filter(c=>c.seasons).map(c=>{
+  const p=playoffStats(c.owner);
+  return {c,p,miss:p.yrs-p.made};
+}).sort((a,b)=>b.miss-a.miss||a.p.rate-b.p.rate).slice(0,10).map(({c,p,miss})=>`<div style="margin:6px 0">${c.owner} ${tagHtml(c.owner)} · <span class="mono">${p.made}/${p.yrs} playoffs · ${miss} misses</span></div>`).join("");
+document.getElementById("takes").innerHTML=`<strong>Scoring title is a curse.</strong> 2025 PF champ Bandits (1893, +27.4, 7-0 away) finished 7th. 2024 PF champ Raimo (1766, +21, 8-0 home) finished 3rd. 2022 PF champ Bandits (1701, 11-3, W6) lost the final.<br><br><strong>Away-game freaks.</strong> Bandits 7-0 on the road in 2022 and again in 2025. Raimo 8-0 at home in 2024. Dropick 0-6 at home in 2020.<br><br><strong>Cerami vs the waiver wire.</strong> 55 moves (2019), 60 (2020), 38 during an L12 2-12 season (2022). Career moves king. Not the winning-percentage king.<br><br><strong>L12 is a real thing.</strong> King Tweak 2022 closed on a 12-game losing streak. Mackey closed 2021 on L6 at 4-10, then won the 2023 title at 7-7.<br><br><strong>Hansen's title line:</strong> 8-6, 1453 PF, -3.2 diff, 11th in scoring. Same year someone scored 1893 and went home in week 15.`;
+let year=2025;
+YEARS.forEach(y=>{const b=document.createElement("button");b.className="pill"+(y===year?" on":"");b.textContent=y;b.onclick=()=>{year=y;[...document.getElementById("yearPills").children].forEach(x=>x.classList.toggle("on",x.textContent==y));drawYear();};document.getElementById("yearPills").appendChild(b);});
+document.getElementById("yearHead").innerHTML=`<tr><th>Rk</th><th>Team</th><th>Owner</th><th>Rec</th><th>PF</th><th>PA</th><th>PF/G</th><th>PA/G</th><th>Diff</th><th>Home</th><th>Away</th><th>Strk</th><th>Moves</th></tr>`;
+function drawYear(){
+  document.getElementById("yearBody").innerHTML=S[year].map(r=>{
+    const cls=r[0]===1?"champ":r[0]<4?"podium":"";
+    const d=r[8],dcls=d>0?"pos":d<0?"neg":"muted";
+    return `<tr class="${cls}"><td class="mono">${r[0]}</td><td>${r[1]}</td><td class="muted">${r[2]}</td><td class="mono">${r[3]}</td><td class="mono">${r[4].toFixed(1)}</td><td class="mono">${r[5].toFixed(1)}</td><td class="mono">${r[6].toFixed(1)}</td><td class="mono">${r[7].toFixed(1)}</td><td class="mono ${dcls}">${d>0?"+":""}${d.toFixed(1)}</td><td class="mono">${r[9]}</td><td class="mono">${r[10]}</td><td class="mono">${r[11]}</td><td class="mono">${r[12]}</td></tr>`;
+  }).join("");
+}
+drawYear();
+/* ===== ENOUGH CUM · schedule, lines, picks. Tuesday: paste new proj from `rankings.py --emit-js`, add results[w], add picks[w+1]. ===== */
+const BOOK={
+sd:25,
+proj:{"Model Busters": 127.4, "Trust The Process": 125.2, "Jackin' Goff": 123.6, "Jack's Scary Team": 123.4, "Team Ermesquid": 122.9, "Team Mackey": 122.3, "Drew's Daring Team": 121.5, "Team Raimo": 120.8, "Chokin The Belichicken": 119.7, "Team Pappas": 119.0, "Team Cream Pies LLC": 118.4, "TWEAK": 117.5, "Hansen's Most Wanted": 117.4, "Booty Bandits": 113.7},
+who:{"Trust The Process": "Chris Adams", "Hansen's Most Wanted": "AJ", "Drew's Daring Team": "Drew Hiboki", "TWEAK": "Tweak", "Jack's Scary Team": "Jack Christensen", "Team Mackey": "Mackey", "Jackin' Goff": "Bailey", "Model Busters": "Tana", "Team Ermesquid": "Dropick", "Booty Bandits": "Pete", "Team Pappas": "Pappas", "Team Raimo": "Raimo", "Team Cream Pies LLC": "Ja", "Chokin The Belichicken": "Charlie"},
+alias:{"Jackin' Goff":"Two Minutemen","Chokin The Belichicken":"The Cokeheads"},
+lines:{
+  1:{"Model Busters@TWEAK": {"fav": "Model Busters", "spread": 10.0}, "Trust The Process@Jackin' Goff": {"fav": "Jackin' Goff", "spread": 0.5}, "Team Raimo@Team Mackey": {"fav": "Team Mackey", "spread": 1.5}, "Team Ermesquid@Jack's Scary Team": {"fav": "Jack's Scary Team", "spread": 0.5}, "Drew's Daring Team@Booty Bandits": {"fav": "Drew's Daring Team", "spread": 8.0}, "Chokin The Belichicken@Team Pappas": {"fav": "Team Pappas", "spread": 0.5}, "Team Cream Pies LLC@Hansen's Most Wanted": {"fav": "Team Cream Pies LLC", "spread": 1.0}}
+},
+sched:{
+  1:[["Model Busters", "TWEAK"], ["Trust The Process", "Jackin' Goff"], ["Team Raimo", "Team Mackey"], ["Team Ermesquid", "Jack's Scary Team"], ["Drew's Daring Team", "Booty Bandits"], ["Chokin The Belichicken", "Team Pappas"], ["Team Cream Pies LLC", "Hansen's Most Wanted"]],
+  2:[["Trust The Process", "Model Busters"], ["TWEAK", "Team Raimo"], ["Jackin' Goff", "Team Ermesquid"], ["Team Mackey", "Drew's Daring Team"], ["Jack's Scary Team", "Chokin The Belichicken"], ["Booty Bandits", "Team Cream Pies LLC"], ["Team Pappas", "Hansen's Most Wanted"]],
+  3:[["Model Busters", "Team Raimo"], ["Team Ermesquid", "Trust The Process"], ["Drew's Daring Team", "TWEAK"], ["Chokin The Belichicken", "Jackin' Goff"], ["Team Cream Pies LLC", "Team Mackey"], ["Hansen's Most Wanted", "Jack's Scary Team"], ["Team Pappas", "Booty Bandits"]],
+  4:[["Team Ermesquid", "Model Busters"], ["Team Raimo", "Drew's Daring Team"], ["Trust The Process", "Chokin The Belichicken"], ["TWEAK", "Team Cream Pies LLC"], ["Jackin' Goff", "Hansen's Most Wanted"], ["Team Mackey", "Team Pappas"], ["Jack's Scary Team", "Booty Bandits"]],
+  5:[["Model Busters", "Drew's Daring Team"], ["Chokin The Belichicken", "Team Ermesquid"], ["Team Cream Pies LLC", "Team Raimo"], ["Hansen's Most Wanted", "Trust The Process"], ["Team Pappas", "TWEAK"], ["Booty Bandits", "Jackin' Goff"], ["Jack's Scary Team", "Team Mackey"]],
+  6:[["Chokin The Belichicken", "Model Busters"], ["Drew's Daring Team", "Team Cream Pies LLC"], ["Team Ermesquid", "Hansen's Most Wanted"], ["Team Raimo", "Team Pappas"], ["Trust The Process", "Booty Bandits"], ["TWEAK", "Jack's Scary Team"], ["Jackin' Goff", "Team Mackey"]],
+  7:[["Model Busters", "Team Cream Pies LLC"], ["Hansen's Most Wanted", "Chokin The Belichicken"], ["Team Pappas", "Drew's Daring Team"], ["Booty Bandits", "Team Ermesquid"], ["Jack's Scary Team", "Team Raimo"], ["Team Mackey", "Trust The Process"], ["Jackin' Goff", "TWEAK"]],
+  8:[["Hansen's Most Wanted", "Model Busters"], ["Team Cream Pies LLC", "Team Pappas"], ["Chokin The Belichicken", "Booty Bandits"], ["Drew's Daring Team", "Jack's Scary Team"], ["Team Ermesquid", "Team Mackey"], ["Team Raimo", "Jackin' Goff"], ["Trust The Process", "TWEAK"]],
+  9:[["Model Busters", "Team Pappas"], ["Booty Bandits", "Hansen's Most Wanted"], ["Jack's Scary Team", "Team Cream Pies LLC"], ["Team Mackey", "Chokin The Belichicken"], ["Jackin' Goff", "Drew's Daring Team"], ["TWEAK", "Team Ermesquid"], ["Trust The Process", "Team Raimo"]],
+  10:[["Booty Bandits", "Model Busters"], ["Team Pappas", "Jack's Scary Team"], ["Hansen's Most Wanted", "Team Mackey"], ["Team Cream Pies LLC", "Jackin' Goff"], ["Chokin The Belichicken", "TWEAK"], ["Drew's Daring Team", "Trust The Process"], ["Team Ermesquid", "Team Raimo"]],
+  11:[["Model Busters", "Jack's Scary Team"], ["Team Mackey", "Booty Bandits"], ["Jackin' Goff", "Team Pappas"], ["TWEAK", "Hansen's Most Wanted"], ["Trust The Process", "Team Cream Pies LLC"], ["Team Raimo", "Chokin The Belichicken"], ["Team Ermesquid", "Drew's Daring Team"]],
+  12:[["Team Mackey", "Model Busters"], ["Jack's Scary Team", "Jackin' Goff"], ["Booty Bandits", "TWEAK"], ["Team Pappas", "Trust The Process"], ["Hansen's Most Wanted", "Team Raimo"], ["Team Cream Pies LLC", "Team Ermesquid"], ["Chokin The Belichicken", "Drew's Daring Team"]],
+  13:[["Model Busters", "Jackin' Goff"], ["TWEAK", "Team Mackey"], ["Trust The Process", "Jack's Scary Team"], ["Team Raimo", "Booty Bandits"], ["Team Ermesquid", "Team Pappas"], ["Drew's Daring Team", "Hansen's Most Wanted"], ["Chokin The Belichicken", "Team Cream Pies LLC"]],
+  14:[["TWEAK", "Model Busters"], ["Jackin' Goff", "Trust The Process"], ["Team Mackey", "Team Raimo"], ["Jack's Scary Team", "Team Ermesquid"], ["Booty Bandits", "Drew's Daring Team"], ["Team Pappas", "Chokin The Belichicken"], ["Hansen's Most Wanted", "Team Cream Pies LLC"]]
+},
+picks:{
+  1:{
+   "Model Busters@TWEAK": {
+    "side": "Model Busters",
+    "type": "spread",
+    "why": "Nacua and Stafford walk into a lineup with a 4-point tight end and a 2-point defense. Lay the ten. Tweak covers only if the waiver wire opens early."
+   },
+   "Trust The Process@Jackin' Goff": {
+    "side": "Trust The Process",
+    "type": "spread",
+    "why": "Allen, Gibbs, McBride is the best top three in the league. Bailey is starting a rookie back with zero tape. Take the half point and the adults."
+   },
+   "Team Raimo@Team Mackey": {
+    "side": "Team Raimo",
+    "type": "spread",
+    "why": "Mackey is starting three guys the model has seen for a combined 16 games. Chase and Burrow are real. Bronze factory opens 1-0."
+   },
+   "Team Ermesquid@Jack's Scary Team": {
+    "side": "Jack's Scary Team",
+    "type": "spread",
+    "why": "McCaffrey at 24.5 a game against a man who has to pick one of four quarterbacks and will pick wrong. Tourist covers."
+   },
+   "Drew's Daring Team@Booty Bandits": {
+    "side": "Booty Bandits",
+    "type": "spread",
+    "why": "The model says Drew by eight. The commissioner says 140 out of spite. I have never lost a week 1 I was angry about. Take the points."
+   },
+   "Chokin The Belichicken@Team Pappas": {
+    "side": "Chokin The Belichicken",
+    "type": "spread",
+    "why": "Smith-Njigba and Hurts against a couch. Pappas sets his first real lineup in week 3. Take the half point and the pulse."
+   },
+   "Team Cream Pies LLC@Hansen's Most Wanted": {
+    "side": "Hansen's Most Wanted",
+    "type": "ml",
+    "why": "Champion at home against the man who murdered me in round one. AJ steals belts. He can steal a week. Moneyline. No points. No respect."
+   }
+  }
+},
+results:{}
+};
+function erf(x){const s=x<0?-1:1;x=Math.abs(x);const t=1/(1+0.3275911*x);const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);return s*y;}
+function phi(z){return 0.5*(1+erf(z/Math.SQRT2));}
+function mlOf(p){p=Math.min(Math.max(p,0.02),0.98);return p>=0.5?"-"+Math.round(100*p/(1-p)):"+"+Math.round(100*(1-p)/p);}
+function nm(t){return (BOOK.alias&&BOOK.alias[t])||t;}
+function bookLine(a,b,w){
+  const pa=BOOK.proj[a]||0,pb=BOOK.proj[b]||0,fz=w&&BOOK.lines&&BOOK.lines[w]&&BOOK.lines[w][a+"@"+b];
+  const diff=fz?(fz.fav===a?1:-1)*fz.spread:pa-pb;   // lines freeze when the week's card posts
+  const fav=diff>=0?a:b,dog=diff>=0?b:a,d=Math.abs(diff),spread=Math.round(d*2)/2,p=phi(d/(BOOK.sd*Math.SQRT2));
+  return {fav,dog,spread,p,fml:mlOf(p),dml:mlOf(1-p),total:Math.round((pa+pb)*10)/10};
+}
+function spreadTxt(n){return n===0?"PK":n.toFixed(1).replace(/\.0$/,"");}
+function sideTxt(side,L){return L.spread===0?"PK":(side===L.fav?"-":"+")+spreadTxt(L.spread);}
+function pickTxt(pk,L){if(!pk)return "";return pk.type==="ml"?nm(pk.side)+" ML":nm(pk.side)+" "+sideTxt(pk.side,L);}
+function gradePick(pk,L,res,a,b){
+  if(!pk||!res||res[a]==null||res[b]==null) return null;
+  const other=pk.side===a?b:a,m=res[pk.side]-res[other];
+  if(pk.type==="ml") return m>0?"W":m<0?"L":"P";
+  const need=pk.side===L.fav?L.spread:-L.spread;
+  return m>need?"W":m<need?"L":"P";
+}
+function gradeMark(g){return g==="W"?" ✅":g==="L"?" ❌":g==="P"?" ➖":"";}
+let bookWeek=1;
+function bookRecord(){
+  let w=0,l=0,p=0,fs=0,fl=0,err=0,n=0,weeks=0;
+  Object.keys(BOOK.results).forEach(k=>{
+    const res=BOOK.results[k],games=BOOK.sched[k]||[];if(!games.length)return;weeks++;
+    games.forEach(([a,b])=>{
+      if(res[a]==null||res[b]==null)return;
+      const L=bookLine(a,b,k),g=gradePick((BOOK.picks[k]||{})[a+"@"+b],L,res,a,b);
+      if(g==="W")w++;else if(g==="L")l++;else if(g==="P")p++;
+      if(res[L.fav]>res[L.dog])fs++;else if(res[L.fav]<res[L.dog])fl++;
+      err+=Math.abs((res[L.fav]-res[L.dog])-L.spread);n++;
+    });
+  });
+  return {w,l,p,fs,fl,mae:n?err/n:0,weeks};
+}
+function drawBook(){
+  const R=bookRecord();
+  document.getElementById("bookStats").innerHTML=[["Picks",R.w+"-"+R.l+(R.p?"-"+R.p:"")],["Favorites SU",R.fs+"-"+R.fl],["Avg miss",R.weeks?R.mae.toFixed(1):"—"],["Weeks graded",R.weeks]]
+    .map(x=>`<div class="stat"><b>${x[1]}</b><span>${x[0]}</span></div>`).join("");
+  const pills=document.getElementById("bookPills");pills.innerHTML="";
+  Object.keys(BOOK.sched).forEach(k=>{
+    const b=document.createElement("button");b.className="pill"+(Number(k)===bookWeek?" on":"");
+    b.textContent="Wk "+k+(BOOK.results[k]?" ✓":"");b.onclick=()=>{bookWeek=Number(k);drawBook();};pills.appendChild(b);
+  });
+  const res=BOOK.results[bookWeek]||null,pk=BOOK.picks[bookWeek]||{};
+  const cards=(BOOK.sched[bookWeek]||[]).map(([a,b])=>{
+    const L=bookLine(a,b,bookWeek),p=pk[a+"@"+b],g=gradePick(p,L,res,a,b);
+    const pickHtml=p?`<div class="mu-pick"><b>Pick:</b> ${pickTxt(p,L)}${gradeMark(g)}</div><div class="mu-why">${p.why||""}</div>`:`<div class="mu-why">No pick yet. Card drops Wednesday.</div>`;
+    const resHtml=(res&&res[a]!=null&&res[b]!=null)?`<div class="mu-res mono">Final: ${nm(a)} ${res[a]} · ${nm(b)} ${res[b]}</div>`:"";
+    return `<div class="mu ${L.fav===a?"fav-away":"fav-home"}"><div class="mu-teams"><span class="away">${nm(a)}<small>${BOOK.who[a]||""}</small></span><span class="at">@</span><span class="home">${nm(b)}<small>${BOOK.who[b]||""}</small></span></div><div class="mu-line mono">${nm(L.fav)} ${sideTxt(L.fav,L)} (${L.fml}) · ${nm(L.dog)} ${sideTxt(L.dog,L)} (${L.dml}) · ${Math.round(L.p*100)}% · O/U ${L.total}</div>${pickHtml}${resHtml}</div>`;
+  }).join("");
+  document.getElementById("bookCard").innerHTML=`<h2>Week ${bookWeek} card</h2><p class="hint">Away at home. Favorite in red. Spread is the model's projected margin. Win chance assumes a ${BOOK.sd}-point weekly standard deviation per team.</p>${cards}`;
+  const board=Object.keys(BOOK.proj).sort((x,y)=>BOOK.proj[y]-BOOK.proj[x]);
+  document.getElementById("bookBoard").innerHTML="<tr><th>#</th><th>Team</th><th>Owner</th><th>Proj / wk</th><th>vs #1</th></tr>"+board.map((t,i)=>`<tr><td class="mono">${i+1}</td><td>${nm(t)}</td><td class="muted">${BOOK.who[t]||""}</td><td class="mono">${BOOK.proj[t].toFixed(1)}</td><td class="mono ${i?"neg":"muted"}">${i?"-"+(BOOK.proj[board[0]]-BOOK.proj[t]).toFixed(1):"—"}</td></tr>`).join("");
+  document.getElementById("bookSched").innerHTML="<tr><th>Wk</th><th>Away</th><th>Home</th><th>Line</th><th>Pick</th><th>Final</th></tr>"+Object.keys(BOOK.sched).map(k=>BOOK.sched[k].map(([a,b])=>{
+    const L=bookLine(a,b,k),r=BOOK.results[k],p=(BOOK.picks[k]||{})[a+"@"+b],g=gradePick(p,L,r,a,b);
+    return `<tr><td class="mono">${k}</td><td>${nm(a)}</td><td>${nm(b)}</td><td class="mono">${nm(L.fav)} ${sideTxt(L.fav,L)}</td><td>${p?pickTxt(p,L)+gradeMark(g):""}</td><td class="mono">${(r&&r[a]!=null&&r[b]!=null)?r[a]+" · "+r[b]:""}</td></tr>`;
+  }).join("")).join("");
+}
+drawBook();
+function showView(id,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='view-'+id));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  (btn||document.getElementById('tab-'+id)).classList.add('on');
+  const titles={
+    neumy:{h:"NEUMY <span>REPORT</span>",t:"Fairfield Fantasy 2019–2026 · Neumy Report",l:"Weekly column. Consolation does not exist. Tuesday mornings we add a new issue."},
+    book:{h:"ENOUGH <span>CUM</span>",t:"Fairfield Fantasy 2019–2026 · Enough Cum",l:"Schedule, lines, picks. The model sets the number. You lose to it. Record printed at the top so nobody has to trust me."},
+    bible:{h:"LEAGUE <span>BIBLE</span>",t:"Fairfield Fantasy 2019–2026 · League Bible",l:"Seven years of PF, PA, records, streaks, and tags. Rings up top. Grades at the bottom."},
+    desk:{h:"THE <span>DESK</span>",t:"Fairfield Fantasy 2019–2026 · Desk",l:"Commish only. Cut the week, edit the draft, publish."}
+  };
+  const x=titles[id]||titles.neumy;
+  document.getElementById("pageTitle").innerHTML=x.h;
+  document.getElementById("pageLede").textContent=x.l;
+  document.title=x.t;
+}
+const DESK_PIN="neumy";
+function deskOn(){return sessionStorage.getItem("ff-desk")==="1";}
+function openDesk(btn){
+  if(deskOn()){showView("desk",btn);return;}
+  document.getElementById("deskErr").textContent="";
+  document.getElementById("deskPin").value="";
+  document.getElementById("loginMask").classList.add("on");
+  setTimeout(()=>document.getElementById("deskPin").focus(),50);
+}
+function tryDesk(){
+  const v=document.getElementById("deskPin").value.trim();
+  if(v!==DESK_PIN){document.getElementById("deskErr").textContent="Wrong pin.";return;}
+  sessionStorage.setItem("ff-desk","1");
+  document.getElementById("loginMask").classList.remove("on");
+  showView("desk",document.getElementById("tab-desk"));
+}
+function logoutDesk(){
+  sessionStorage.removeItem("ff-desk");
+  showView("neumy",document.getElementById("tab-neumy"));
+}
+document.addEventListener("keydown",e=>{
+  if(e.key==="Enter" && document.getElementById("loginMask").classList.contains("on")) tryDesk();
+});
+const REPORTS=[
+{id:"pre",label:"Issue 0",title:"PRESEASON EDITION OF THE NEUMY REPORT",meta:"Issue 0 · Year 8 · Tuesday Sept 1 2026",html:`
+<p>WERE BACK BITCH. Welcome back. Year 8 of the Fairfield University Fantasy Football League. Predictions. Storylines. Bold takes. A new giant in the building. And your first preseason Super Bowl pick of 2026.</p>
+<p><em>SURGEON’S WARNING: The rankings below were cooked in a very, very complex software that I myself created. If you are baffled, save it. The model does not lie. I am the model.</em></p>
+<p>OKAY LETS GET INTO IT.</p>
+<h4>Last year, since some of you pretend it didn’t happen</h4>
+<ol>
+<li>Hansen’s Most Wanted — champion. 8-6. 1,452 PF. ELEVENTH in scoring. Beat the 1,893-point assassin in the dance. Steal of the decade. Wear that belt like you earned the math. You didn’t.</li>
+<li>Cream Pies LLC — runner up. Murdered Pete in round one. Again: Ja ends seasons. He does not stack them.</li>
+<li>Raimo — 11-3, bye, bronze. The bye is a weapon. You used it like a nap. Third place is a participation trophy with better fonts.</li>
+</ol>
+<h4>Most points scored last season 😮‍💨</h4>
+<ol>
+<li>Pete / Bandits — 1,893.04. Ten wins. Seven-and-oh on the road. First-round funeral. Congratulations on the scoring title nobody asked for.</li>
+<li>Raimo — 1,684.32. The model loved you. The bracket did not.</li>
+<li>Charlie — 1,624.36. Always hovering. Never lifting it.</li>
+</ol>
+<h4>Least points scored last season 🤮</h4>
+<ol>
+<li>Model Busters — 1,447.86. You changed the name to mock the model. The model mocked you back.</li>
+<li>Jackin’ Goff — 1,433.46. Bailey, hamburger helper energy is not a strategy.</li>
+<li>Hansen — 1,452.68. Yes the champion is on this list. That is the joke. Write it down.</li>
+</ol>
+<h4>Tell me how I’m losing</h4>
+<p><strong>Pete.</strong> 1,893 points. 10-4. Plus-27 differential. 7-0 away. And you lost the only week that paid. Cream Pies sent you home. Two finals, zero rings. Paper king. Bracket coward. Fix October or keep collecting regular-season participation ribbons.</p>
+<p><strong>Pappas.</strong> 3-11. Five waiver moves. Founding champion rotting in the basement. There is no process. There is a couch.</p>
+<h4>Peter’s Preseason Notes 📝</h4>
+<p>HAPPY NEW YEAR. It is officially the best time of the year. Alexa, play Thunderstruck. Boys… WE ARE SO BACK. AND WE ARE JUST GETTING STARTED.</p>
+<p>I’d be remiss if I didn’t start with the new blood. <strong>Drew Hiboki</strong> is in the building. The man is like 7 foot and still can’t get the ball in the air on a golf course. Welcome to the League of FU, Drew. Height does not travel in PPR. You cannot posterize a waiver wire. You will be treated with the same love we gave Jack as a rookie: five adds and a participation ribbon unless you actually check ESPN on Wednesday. The model has you unranked because the model has never seen you miss a 4-footer. That changes week 1.</p>
+<p>Seven different champions in seven years. Zero repeats. We have never seen a reigning champion even stay relevant. Hansen has the belt and 1,453 PF. Eleventh in scoring. He beat the 1,893-point assassin and wants to be the first two-time champ. History says sit down. Pete built another Super Bowl roster and lost the only week that paid. Two finals. Zero rings. Paper king. Bracket coward. Raimo went 11-3, took a bye, and took bronze. The bye is a weapon. You used it like a nap.</p>
+<p>In this league there are champions and there are chumps. Dropick won it in 2024 and finished 13th. Do not fade him. Do not crown him. Coin. Mackey won it at 7-7 and will be boring again, which is how he eats. Ja ends other people’s seasons and then auto-drafts his own. Tana has a ring and a rebrand addiction. Pick a name. Pappas has the first ring and a 3-11. Five adds a year is how you stay dead. Chris will tell you RBs are useless and then invent a new process. Cerami will touch the wire 20 times by Halloween and call it grinding. 2022 was L12. Cap the panic.</p>
+<p>We’ve never seen a champion with more than 8 wins. 8-6 has lifted it. 7-7 has lifted it. JUST GET IN AND ANYTHING CAN HAPPEN. The season is never won in the first five weeks. It can be lost.</p>
+<p>GENTLEMEN. Are you unhappy with your draft? GOOD. PICK UP THE PHONE AND START DIALING. Did your starters ruin the immaculate vibes? GOOD. PICK UP THE PHONE. Does your girlfriend think you’re a worthless loser? GOOD. PICK UP THE PHONE. I WANT YOU TO DEAL WITH YOUR PROBLEMS. I WANT YOU TO BECOME RICH. You’re only a phone call away from trade raping DROPICK. First one there gets the prize. Drew: that includes you. Height is not FAAB.</p>
+<h4>Week 1 Sunday Night Football Game of the Week</h4>
+<p>We do not have official lines in the book yet. So here is the only SNF that matters: <strong>the entire league vs last year’s tape</strong>. Hansen tries to become the first two-time champ. History says no. Pete tries to win a playoff game that counts. History says sit down. Raimo tries to turn a bye into a parade. History says bronze. Drew tries to exist. History says welcome to 1-6.</p>
+<p>Game line: History -3.5. MY PICK… chaos moneyline. Somebody 8-6 lifts it again. Bet it and shut up.</p>
+<h4>Preseason Power Rankings (MEANS EVERYTHING)</h4>
+<ol>
+<li>Pete</li>
+<li>Raimo</li>
+<li>Mackey</li>
+<li>Charlie</li>
+<li>Ja</li>
+<li>AJ</li>
+<li>BK</li>
+<li>Tweak</li>
+<li>Tana</li>
+<li>Chris</li>
+<li>Dropick</li>
+<li>Jack</li>
+<li>Bailey</li>
+<li>Pappas</li>
+<li>Drew Hiboki (unranked on purpose. 7 foot. Zero tape. Prove it.)</li>
+</ol>
+<p>Preseason Super Bowl prediction: another banner does NOT stay in Hansen’s living room. Pete finally beats Ja in a game that counts and the model gets to shut up for one night. No questions at this time please.</p>
+<p>Like I said, these rankings mean everything. Will check back in after week 1. Scoreboard hits the desk Tuesday. Best of luck. GO OUT THERE AND CUM.</p>
+`},
+{id:"pre2",label:"Draft Issue",title:"THE MODEL SPEAKS · POST-DRAFT EDITION",meta:"Draft Issue · Year 8 · Wednesday Sept 9 2026",html:`
+<p>THE DRAFT IS OVER. The rosters are in the machine. And for the first time in the history of this league the power rankings are not my opinion. They are math. Fourteen rosters. 210 picks. Every player scored in OUR settings off last year’s tape. If you are offended, take it up with the software. The software does not read the group chat.</p>
+<p><em>SURGEON’S WARNING: This board is 60 percent what your guys actually scored per game last year in Fairfield scoring, 40 percent where this room drafted them, best legal lineup, a whiff of bench. It does not know about knees. It does not know about suspensions. It does not know about your feelings. Neither do I.</em></p>
+<p>OKAY LETS GET INTO IT.</p>
+<h4>Fourteen, not fifteen</h4>
+<p>Housekeeping. Fourteen teams drafted. Drew Hiboki is in. BK is not on a roster. Empty calories left the buffet. Pour one out and move on. The Issue 0 board had fifteen names. This one has fourteen. Arrows are off that list with BK erased.</p>
+<h4>Steals, since somebody paid attention 😮‍💨</h4>
+<ol>
+<li>Matthew Stafford at 116 to Model Busters. 20.6 a game last year. Fourteenth quarterback off the board. Tana mocked the model and then drafted like it.</li>
+<li>Trevor Lawrence at 93 to Jack Christensen. 19.9 a game. He let ten quarterbacks go and still got the fifth-best one.</li>
+<li>Christian McCaffrey at 9 to Jack Christensen. 24.5 a game. Best per-game running back in football fell to nine because you were all scared of a birthday.</li>
+<li>Caleb Williams at 78 to Bailey. 18.7 a game. Hamburger helper found a filet in the bargain bin.</li>
+</ol>
+<h4>Reaches, since somebody didn’t 🤮</h4>
+<ol>
+<li>Justin Jefferson at 12 to Pete. 11.9 a game last year. ELEVEN POINT NINE. You drafted the name on the jersey.</li>
+<li>Kenneth Walker at 19 to Pappas. 11.3 a game. Nineteenth pick. The couch drafted a couch.</li>
+<li>Saquon Barkley at 13 to Ja. 14.5 a game. The assassin drafted a highlight reel from two years ago.</li>
+<li>Isaiah Likely at 80 to Tweak. 4.4 a game. Four. Point. Four. He drafted a tight end that scores like a kicker with a hamstring.</li>
+</ol>
+<h4>Tell me how I’m losing</h4>
+<p><strong>Pete.</strong> Dead last. Fourteenth. The commissioner. The 1,893-point paper king is the model’s floor. Justin Jefferson at 12 for 11.9 a game. MarShawn Lloyd as the RB2 with zero games of tape. Carnell Tate in the flex with zero games of tape. Packers D/ST scored 4.5 a game last year. You drafted a Super Bowl roster in 2025 and a participation ribbon in 2026. The model gives you 113.7 a week. Tana is a 13.5-point favorite over you on a neutral field. You will score 140 in week 1 out of spite and lose to Ja in December anyway.</p>
+<p><strong>Tweak.</strong> Twelfth. Jonathan Taylor at 5 is the only adult in the room, 21.3 a game. Rashee Rice, 18.8 in eight games, fine. Then Isaiah Likely at tight end, 4.4 a game, and Cowboys D/ST at 2.2, the worst defense anybody drafted. Jadarian Price is the RB2 with zero snaps of tape. The panic addict built a roster that needs the waiver wire by Wednesday. Congratulations, you drafted the exact team you always draft. Cap it at 15 adds. You won’t.</p>
+<p><strong>AJ.</strong> Thirteenth. The champion. Belt thief drafted a belt thief roster: eleventh in points last year, thirteenth in projection now. James Cook is real at 17.8. Omarion Hampton, nine games. Brock Purdy, nine games. The receivers are Emeka Egbuka at 11.5 and DJ Moore at 10.0. You are going to be 8-6 again and make the dance again and I am going to hate every second of it.</p>
+<h4>The Model’s Power Rankings (MEANS EVERYTHING)</h4>
+<ol>
+<li>Tana ⬆️ — 127.4 a week. Puka Nacua 23.4 a game. Stafford at 116. Bowers. Skattebo. You renamed the team to bust the model and the model made you the favorite. Rebrand addict, reigning champ of the spreadsheet. Pick a name and keep it. This one is working.</li>
+<li>Bailey ⬆️ — 123.6. Achane 20.2. Pickens 17.2. Caleb at 78. Seahawks D/ST 10.9 a game, best defense in the draft. Jeremiyah Love at 35 is a rookie with no tape and the model still likes the room. Hamburger helper became a real dinner. Two straight 5-9s say the league learns you by October.</li>
+<li>Jack Christensen ⬆️ — 123.4. McCaffrey 24.5. Lawrence 19.9. Nico Collins. Tyler Shough on the bench at 15.7 for free. The tourist drafted like a resident. Now check waivers on Wednesday or the model takes this back.</li>
+<li>Chris Adams ⬆️ — 123.0. Josh Allen 21.5. Gibbs 21.6. McBride 18.6. Three of the best values on the board, then Alvin Kamara at 9.2 as the RB2 with four rookie receivers behind him. The process skipped running backs. Again. Top heavy. One hamstring from a eulogy.</li>
+<li>Dropick ⬆️ — 122.9. Four quarterbacks. Mahomes at 126 for a reason the model cannot see. Lamar. Daniel Jones. Baker. One lineup slot. Chase Brown 16.6, Drake London 16.8. The coin flip drafted four coins. ESPN will love it. The model has you fifth and confused.</li>
+<li>Mackey ⬇️ — 122.3. Bijan at 1 is the pick, 21.8 a game. Then Kyler Murray, five games of tape. Garrett Wilson, seven. Malik Nabers, four. The model is projecting a roster that mostly does not exist yet. Ravens D/ST at 4.5. Silent killer drafted a silent question mark. Boring won you a ring. This is not boring.</li>
+<li>Drew Hiboki ⬆️ — 121.5. The model finally has tape and it says middle of the pack. Amon-Ra 19.1. Herbert. Kyren. Etienne. Jared Goff at 17.4 on the bench is better than half the league’s starter. Seven feet tall and drafted above the champion. Prove it week 1 or it is a tall coincidence.</li>
+<li>Raimo ⬇️ — 120.8. Ja’Marr Chase 19.6. Burrow, eight games. Breece Hall 13.0. Javonte 15.2. Chiefs D/ST 5.2. The bronze factory drafted a bronze roster. Eighth. Which is exactly where you finish after the bye.</li>
+<li>Pappas ⬆️ — 119.0. Drake Maye 20.7, second-best quarterback in the league at pick 47. Texans D/ST 10.2, second-best defense drafted. Then Kenneth Walker at 19 for 11.3 a game. The founding corpse has a pulse and a reach. Two nights on the wire and this is a playoff team. So it will not be.</li>
+<li>Charlie ⬇️ — 118.6. Smith-Njigba 21.2. Hurts. Jeanty 14.4. Then Woody Marks 9.4 as the RB2. Forever 8-6 drafted a forever 8-6 roster. Tenth. Hovering. As always.</li>
+<li>Ja ⬇️ — 118.4. Runner-up. Saquon 14.5 at 13. A.J. Brown 14.7 in New England. Davante 15.9. David Montgomery 9.8. The assassin auto-drafted his own funeral. Bo Nix at 17.8 sits behind Jaxson Dart. Eleventh. Kills seasons. Cannot build one.</li>
+<li>Tweak ⬇️ — 117.5. Jonathan Taylor 21.3. Rashee Rice. Then a tight end at 4.4 and a defense at 2.2. See above. Twelfth. Panic addict. The wire opens Wednesday and you will be first in line.</li>
+<li>AJ ⬇️ — 117.4. Champion. Thirteenth. Eleventh in points last year, thirteenth in projection now. The belt was a mugging. The model is the cop.</li>
+<li>Pete ⬇️ — 113.7. Last. Paper king. 11.9 a game at pick 12. MarShawn Lloyd. Carnell Tate. Packers D/ST. 1,893 points last year and the model thinks you drafted with your eyes closed. Bracket coward AND draft coward. Historic.</li>
+</ol>
+<p>Top to bottom is 13.7 points a week. Tana over Pete is -13.5 on a neutral field. Sixty-five percent. Fantasy is a coin with a thumb on it. The thumb is the model.</p>
+<h4>Week 1 Book</h4>
+<p>The book is open. Seven games, seven numbers, all cooked from the board above. Full card, the rest of the schedule, and the running record live under <strong>Enough Cum</strong> up top.</p>
+<ol>
+<li>Model Busters -10 at Tweak. Pick: Model Busters. Lay it. A 4-point tight end does not cover anything.</li>
+<li>Jackin' Goff -0.5 vs Chris Adams. Pick: Trust The Process. Allen, Gibbs, McBride against a rookie back with no tape.</li>
+<li>Mackey -1.5 vs Raimo. Pick: Team Raimo. Three Mackey starters have 16 games of tape between them.</li>
+<li>Jack Christensen -0.5 vs Dropick. Pick: Jack's Scary Team. McCaffrey against a man choosing between four quarterbacks.</li>
+<li>Drew Hiboki -8 at Pete. Pick: Booty Bandits. The commissioner scores 140 out of spite in week 1. Take the points.</li>
+<li>Pappas -0.5 vs Charlie. Pick: Chokin The Belichicken. Smith-Njigba and Hurts against a couch.</li>
+<li>Ja -1 at AJ. Pick: Hansen's Most Wanted, moneyline. The champion at home against the man who ended me in round one.</li>
+</ol>
+<p><em>Post-draft patch: the league runs one running back and two flex, not two and one. The software has been informed. Chris Adams moves to second at 125.2, Charlie to ninth at 119.7, nobody else moves, and the week 1 numbers above stand as posted. Also, two men renamed their teams after reading this column. Bailey is now Two Minutemen. Charlie is now The Cokeheads. The model does not grade names.</em></p>
+<p>The model keeps a record all year and prints it at the top of the book so you can watch it go 7-0 while you go 0-7. Scoreboard hits the desk Tuesday. GO OUT THERE AND CUM.</p>
+`}
+];
+const KEYS=["week","date","winners","most","least","close-who","close-blurb","blow-who","blow-blurb","lucky-who","lucky-blurb","lose-who","lose-blurb","potw-who","potw-blurb","notes","snf-who","snf-line","snf-blurb","ranks","sign"];
+function readForm(){
+  const o={};
+  KEYS.forEach(k=>o[k]=(document.getElementById("f-"+k)||{}).value||"");
+  o.week=String(o.week||"1");
+  return o;
+}
+function fillForm(o){
+  KEYS.forEach(k=>{
+    const el=document.getElementById("f-"+k);
+    if(el && o[k]!=null) el.value=o[k];
+  });
+}
+function lines(s){return (s||"").split(/\n/).map(x=>x.trim()).filter(Boolean);}
+function ol(s){return "<ol>"+lines(s).map(x=>"<li>"+x+"</li>").join("")+"</ol>";}
+function p(s){return (s||"").split(/\n\n+/).map(x=>"<p>"+x.replace(/\n/g,"<br>")+"</p>").join("");}
+function formatHtml(d){
+  const w=d.week||"?";
+  return `
+<p>Your week ${w} fantasy recap:</p>
+<h4>This week’s winners</h4>${ol(d.winners)}
+<h4>Most points scored this season 😮‍💨</h4>${ol(d.most)}
+<h4>Least points scored this season 🤮</h4>${ol(d.least)}
+<h4>Closest game</h4><p><strong>${d["close-who"]||"—"}</strong></p>${p(d["close-blurb"])}
+<h4>Biggest blowout</h4><p><strong>${d["blow-who"]||"—"}</strong></p>${p(d["blow-blurb"])}
+<h4>Lucky winner</h4><p><strong>${d["lucky-who"]||"—"}</strong></p>${p(d["lucky-blurb"])}
+<h4>Tell me how I’m losing</h4><p><strong>${d["lose-who"]||"—"}</strong></p>${p(d["lose-blurb"])}
+<h4>Highest scoring Fantasy player of the week</h4><p><strong>${d["potw-who"]||"—"}</strong></p>${p(d["potw-blurb"])}
+<h4>Peter’s Notes 📝</h4>${p(d.notes)}
+<h4>Week ${Number(w)+1} Sunday Night Football Game of the Week</h4>
+<p><strong>${d["snf-who"]||"—"}</strong></p>${p(d["snf-blurb"])}
+<p>Game line: ${d["snf-line"]||"—"}</p>
+<h4>Peter’s Power Rankings</h4>${p(d.ranks)}
+<p>${d.sign||("Best of luck in week "+(Number(w)+1)+", get out there and dump one in her!!")}</p>`;
+}
+function formatChat(d){
+  const n=x=>lines(x).map((l,i)=>`\t${i+1}.\t${l}`).join("\n");
+  const w=d.week||"?";
+  return `NEUMY REPORT:
+Your week ${w} fantasy recap:
+This weeks winners:
+${n(d.winners)}
+Most points scored this season😮‍💨
+${n(d.most)}
+Least points scored this season🤮
+${n(d.least)}
+Closest game:
+${d["close-who"]||""}
+${d["close-blurb"]||""}
+Biggest blowout:
+${d["blow-who"]||""}
+${d["blow-blurb"]||""}
+Lucky winner:
+${d["lucky-who"]||""}
+${d["lucky-blurb"]||""}
+Tell me how I’m losing:
+${d["lose-who"]||""}
+${d["lose-blurb"]||""}
+Highest scoring Fantasy player of the week:
+${d["potw-who"]||""}
+${d["potw-blurb"]||""}
+——————
+Peter’s Notes 📝
+${d.notes||""}
+Week ${Number(w)+1} Sunday Night Football Game of the Week:
+${d["snf-who"]||""}
+${d["snf-blurb"]||""}
+Game line: ${d["snf-line"]||""}
+—————————————-
+Now for Peters Power Rankings:
+${d.ranks||""}
+${d.sign||("Best of luck in week "+(Number(w)+1)+", go out there and cum!")}`;
+}
+function loadStore(){try{return JSON.parse(localStorage.getItem("ff-neumy-weeks")||"{}");}catch(e){return {};}}
+function saveStore(s){localStorage.setItem("ff-neumy-weeks",JSON.stringify(s));}
+function publishedReports(){
+  const s=loadStore();
+  return Object.keys(s).sort((a,b)=>Number(a)-Number(b)).map(w=>{
+    const d=s[w];
+    const html=d.draft?d.draft.split(/\n\n+/).map(b=>"<p>"+b.replace(/\n/g,"<br>")+"</p>").join(""):formatHtml(d);
+    return {id:"w"+w,label:"Week "+w,title:"Your week "+w+" fantasy recap",meta:(d.date||("Week "+w)),html,data:d};
+  });
+}
+let reportId=REPORTS[REPORTS.length-1].id;
+function allReports(){return REPORTS.concat(publishedReports());}
+function drawReport(){
+  const wrap=document.getElementById("weekPills");
+  wrap.innerHTML="";
+  allReports().forEach(r=>{
+    const b=document.createElement("button");
+    b.className="pill"+(r.id===reportId?" on":"");
+    b.textContent=r.label;
+    b.onclick=()=>{reportId=r.id;drawReport();};
+    wrap.appendChild(b);
+  });
+  const r=allReports().find(x=>x.id===reportId)||allReports()[0];
+  document.getElementById("neumyIssue").innerHTML=`<div class="issue"><div class="meta">${r.meta}</div><h3>${r.title}</h3>${stampTags(r.html)}</div>`;
+}
+function pick(arr,n){return arr[Math.abs(n)%arr.length];}
+function cookNotes(d,spin){
+  const w=Number(d.week||1);
+  const win=lines(d.winners);
+  const most=lines(d.most);
+  const least=lines(d.least);
+  const names=win.concat([d["lucky-who"],d["lose-who"],d["close-who"],d["blow-who"]].filter(Boolean));
+  // openers carry a week window so week 1 never gets the quarter-pole speech
+  const openers=[
+    {min:1,max:1,t:"WEEK 1 IS IN THE BOOKS. The drama. The upsets. The blowouts. Boys…WE ARE SO BACK. ALEXA..PLAY THUNDERSTRUCK BY AC/DC."},
+    {min:2,max:3,t:"Two weeks of football will change a personality. Teams that were dead have risen. Teams that looked solid slid into the barrel."},
+    {min:2,max:17,t:"Apologies if the last one was late. The Yankees will do that to a man. We are back. Week "+w+" is in the books."},
+    {min:4,max:7,t:"It feels like yesterday we were doing week 1. Time flies when half of you are 2-4. Quarter-pole energy. Separate the contenders from the pretenders."},
+    {min:3,max:17,t:"The peasants that make up the League of FU discussed overthrowing the regime. I’m still here. Let’s get into it."},
+    {min:2,max:17,t:"First off — shoutout whoever covered their SNF pick. The rest of you made me look bad. As usual."},
+    {min:8,max:11,t:"Halfway home. Half of you are already dead and do not know it. The other half are one bad Sunday from joining them."},
+    {min:12,max:14,t:"Playoff math season. Start counting. Then stop, because the math does not like you."}
+  ].filter(o=>w>=o.min&&w<=o.max).map(o=>o.t);
+  const beats=[];
+  if(win[0]) beats.push(win[0].split(/[—\-\d]/)[0].trim()+" sits on top of this week’s winners list. Enjoy it. This league has a funny way of sending the week-1 hero to 5-4.");
+  if(most[0]) beats.push("Scoring board: "+most[0]+". That is the only math that does not lie. Until the bracket.");
+  if(least[0]) beats.push("Cellar: "+least[0]+". If that is you, the waiver wire exists for a reason. Don’t be shy with the FAAB.");
+  if(d["close-who"]) beats.push("Closest was "+d["close-who"]+". One rushing yard. One bench kicker. That’s the whole sport and you already know it.");
+  if(d["blow-who"]) beats.push("Blowout: "+d["blow-who"]+". Not a contest. A statement. Or a funeral. Pick your religion.");
+  if(d["lucky-who"]) beats.push("Lucky winner "+d["lucky-who"]+". Sometimes it is better to be lucky than good. Take the W and do not explain it.");
+  if(d["lose-who"]) beats.push("Tell me how I’m losing: "+d["lose-who"]+". You scored. You lost. Tough nuts. That is the cookie. It is a terrible cookie.");
+  if(d["potw-who"]) beats.push("Player of the week "+d["potw-who"]+". Now tell me the manager who started him actually won.");
+  const tape=[
+    "Pete will build another 10-win team and lose the week that pays until he doesn’t. Two finals. Zero rings. Fix October.",
+    "Hansen / AJ already stole one with 11th in PF. Do not crown a repeat. We have never had one.",
+    "Raimo and the bye: 11-3 last year, bronze. The bye is a weapon. Stop napping through it.",
+    "Cerami will panic-add 20 names and call it grinding. Cap it. 2022 was L12.",
+    "Pappas has the first ring and a couch. Five adds a year is how you stay 14th.",
+    "Dropick is a coin. Champ then 13th. Do not fade. Do not crown.",
+    "Ja ends seasons. Then he auto-drafts his own. Killer, not a dynasty.",
+    "Drew Hiboki is 7 foot and still looking for his first made putt. Height is not a lineup slot. Check the wire on Wednesday.",
+    "Bailey and the Boston apartment: solid drafts, sliding finishes. The league learned you.",
+    "Charlie hovers at 8-6 with 1,624 points and watches other people finish. Stack weeks 15-16 or stay the nice guy.",
+    "Jack used five adds as a rookie. This is not a group chat.",
+    "Tana has a ring and a new team name every August. Pick one personality."
+  ];
+  const used=spin%tape.length;
+  beats.push(tape[used]);
+  beats.push(tape[(used+5)%tape.length]);
+  if(w<=3) beats.push("GENTLEMEN the season is underway. Unhappy with week "+w+"? GOOD. PICK UP THE PHONE. First one to trade-rape a sleeping roster gets the prize.");
+  else if(w<=8) beats.push("Moves have to be made. Who triggers the next trade? Do whatever you have to do. Lock in.");
+  else beats.push("Playoff push starts now. JUST GET IN. 7-7 has lifted this belt. 8-6 has lifted this belt. Legacies on the line. STEP UP OR STEP ASIDE.");
+  if(d["snf-who"]) beats.push("Your SNF is "+d["snf-who"]+". Pride. Friendship. Hate. We’ll see it all.");
+  return [pick(openers,spin+w)].concat(beats).join("\n\n");
+}
+function padDraft(d){
+  const spin=Number(sessionStorage.getItem("ff-spin")||"0");
+  const w=d.week||"1";
+  const next=Number(w)+1;
+  if(!d["close-blurb"] && d["close-who"]) d["close-blurb"]="This was a TIGHT one. "+d["close-who"]+".";
+  if(!d["blow-blurb"] && d["blow-who"]) d["blow-blurb"]="This one was ugly. "+d["blow-who"]+".";
+  if(!d["lucky-blurb"] && d["lucky-who"]) d["lucky-blurb"]=d["lucky-who"]+". Luck has no boundaries.";
+  if(!d["lose-blurb"] && d["lose-who"]) d["lose-blurb"]=d["lose-who"]+". You scored. You lost.";
+  if(!d["potw-blurb"] && d["potw-who"]) d["potw-blurb"]=d["potw-who"]+". Monster line. Did the manager win?";
+  d.notes=cookNotes(d,spin);
+  if(!d["snf-blurb"] && d["snf-who"]) d["snf-blurb"]=d["snf-who"]+". One of those games you will remember even if you are not looking forward to it.";
+  if(!d["snf-line"]) d["snf-line"]="Post a number or shut up.";
+  if(!d.ranks) d.ranks="1 Tana\n2 Chris\n3 Bailey\n4 Jack\n5 Dropick\n6 Mackey\n7 Drew\n8 Raimo\n9 Charlie\n10 Pappas\n11 Ja\n12 Tweak\n13 AJ\n14 Pete";
+  if(!d.sign) d.sign="Best of luck in week "+next+", go out there and cum!";
+  return d;
+}
+function writeDraft(){
+  const spin=Number(sessionStorage.getItem("ff-spin")||"0")+1;
+  sessionStorage.setItem("ff-spin",String(spin));
+  const d=padDraft(readForm());
+  fillForm(d);
+  const text=formatChat(d);
+  document.getElementById("f-draft").value=text;
+  document.getElementById("deskStatus").textContent="Draft written. Read it. Cut lines. Rewrite the notes. Then publish or copy.";
+  document.getElementById("f-draft").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function startFresh(){
+  KEYS.forEach(k=>{const el=document.getElementById("f-"+k); if(el) el.value="";});
+  document.getElementById("f-week").value="1";
+  document.getElementById("f-sign").value="Best of luck in week X, go out there and cum!";
+  document.getElementById("f-draft").value="";
+  document.getElementById("deskStatus").textContent="Blank slate. Drop new facts and write a new draft.";
+}
+function publishWeek(){
+  const d=readForm();
+  d.draft=document.getElementById("f-draft").value;
+  const s=loadStore();
+  s[d.week]=d;
+  saveStore(s);
+  reportId="w"+d.week;
+  drawReport();
+  document.getElementById("deskStatus").textContent="Week "+d.week+" published on the Report tab.";
+  showView("neumy",document.getElementById("tab-neumy"));
+}
+function loadWeek(){
+  const n=document.getElementById("f-load").value;
+  if(n==="0"){document.getElementById("deskStatus").textContent="Issue 0 stays locked. Start at week 1.";return;}
+  const s=loadStore();
+  if(!s[n]){document.getElementById("deskStatus").textContent="No saved week "+n+".";return;}
+  fillForm(s[n]);
+  document.getElementById("f-draft").value=s[n].draft||formatChat(s[n]);
+  document.getElementById("deskStatus").textContent="Loaded week "+n+". Edit anything.";
+}
+function copyWeek(){
+  const text=document.getElementById("f-draft").value.trim()||formatChat(readForm());
+  navigator.clipboard.writeText(text).then(()=>{
+    document.getElementById("deskStatus").textContent="Copied. Paste it in the group chat.";
+  }).catch(()=>prompt("Copy this:",text));
+}
+drawReport();
+</script>
+</body>
+</html>
