@@ -165,10 +165,9 @@
         <li><strong>Write recommended report</strong>, read it, fix it, <strong>Publish</strong>.</li>
         <li><strong>Copy for group chat</strong> and paste it raw.</li>
       </ol>
-      <div class="row3">
+      <div class="row2">
         <div class="field"><label>Week</label><input id="f-week" type="number" min="1" max="17" value="1" oninput="syncGenBtn()" /></div>
         <div class="field"><label>Date line<span class="lab-auto">auto</span></label><input id="f-date" placeholder="Tuesday, Sept 15 2026" /></div>
-        <div class="field"><label>Re-open a week you published from this phone</label><input id="f-load" type="number" min="1" max="17" placeholder="week number, then Re-open below" /></div>
       </div>
       <div class="field"><label>This week’s winners (1–7, one per line)<span class="lab-auto">auto</span></label><textarea id="f-winners" placeholder="Pete&#10;Tana&#10;Ja"></textarea></div>
       <div class="row2">
@@ -204,10 +203,8 @@
       <div class="field"><label>Power rankings / tiers<span class="lab-ins">insert</span></label><textarea id="f-ranks" style="min-height:140px" placeholder="SUPERBOWL FAVORITES:&#10;Pete&#10;Raimo&#10;PLAYOFF CONTENDERS:&#10;Mackey"></textarea></div>
       <div class="field"><label>Sign-off<span class="lab-auto">auto</span></label><input id="f-sign" value="Best of luck in week X, go out there and cum!" /></div>
       <div class="desk-actions">
-        <button onclick="generateWeek()">Generate week facts from scores</button>
-        <button class="ghost" onclick="writeDraft()">Write recommended report</button>
-        <button class="ghost" onclick="startFresh()">Start fresh</button>
-        <button class="ghost" onclick="loadWeek()">Re-open published week</button>
+        <button onclick="writeDraft()">Write recommended report</button>
+        <button class="ghost" id="resetBtn" onclick="resetWeek()">Reset Week 1</button>
       </div>
       <div class="field"><label>Recommended report — read it, edit it, or toss it</label><textarea id="f-draft" style="min-height:320px" placeholder="Hit Write recommended report after the facts above."></textarea></div>
       <div class="desk-actions">
@@ -436,7 +433,7 @@ function drawYear(){
 }
 drawYear();
 /* ===== ENOUGH CUM · schedule, lines, picks. Tuesday: paste new proj from `rankings.py --emit-js`, add results[w], add picks[w+1]. ===== */
-const BUILD="2026-09-15.4";   // bumped by stamp_version.py before every upload
+const BUILD="2026-09-15.6";   // bumped by stamp_version.py before every upload
 const BOOK={
 sd:25,
 proj:{"Model Busters": 127.5, "Trust The Process": 125.5, "Jackin' Goff": 123.5, "Jack's Scary Team": 123.2, "Team Mackey": 122.1, "Drew's Daring Team": 121.4, "Team Raimo": 121.0, "Team Ermesquid": 120.2, "Chokin The Belichicken": 119.8, "Team Pappas": 118.9, "Team Cream Pies LLC": 118.2, "TWEAK": 117.5, "Hansen's Most Wanted": 117.4, "Booty Bandits": 115.6},
@@ -970,6 +967,7 @@ function bookFacts(w){
 function syncGenBtn(){
   const w=Number(document.getElementById("f-week").value||1),b=document.getElementById("genBtn"),has=!!BOOK.results[w];
   b.textContent=has?"Generate Week "+w+" report":"Week "+w+" scores are not in yet";b.disabled=!has;
+  document.getElementById("resetBtn").textContent="Reset Week "+w;
 }
 function generateWeek(){
   const w=Number(document.getElementById("f-week").value||1),st=document.getElementById("deskStatus"),f=bookFacts(w);
@@ -988,12 +986,14 @@ function writeDraft(){
   document.getElementById("deskStatus").textContent="Draft written. Read it. Cut lines. Rewrite the notes. Then publish or copy.";
   document.getElementById("f-draft").scrollIntoView({behavior:"smooth",block:"center"});
 }
-function startFresh(){
-  KEYS.forEach(k=>{const el=document.getElementById("f-"+k); if(el) el.value="";});
-  document.getElementById("f-week").value="1";
-  document.getElementById("f-sign").value="Best of luck in week X, go out there and cum!";
+function resetWeek(){
+  const w=String(Number(document.getElementById("f-week").value||1));
+  KEYS.forEach(k=>{const el=document.getElementById("f-"+k); if(el&&k!=="week") el.value="";});
+  document.getElementById("f-sign").value="Best of luck in week "+(Number(w)+1)+", go out there and cum!";
   document.getElementById("f-draft").value="";
-  document.getElementById("deskStatus").textContent="Blank slate. Drop new facts and write a new draft.";
+  try{const s=loadStore(); if(s[w]){delete s[w]; saveStore(s);} }catch(e){}
+  if(reportId==="w"+w){reportId=REPORTS[REPORTS.length-1].id; drawReport();}
+  document.getElementById("deskStatus").textContent="Week "+w+" reset. Hit Generate Week "+w+" report to reload the facts.";
 }
 function publishWeek(){
   const d=readForm();
@@ -1005,15 +1005,6 @@ function publishWeek(){
   drawReport();
   document.getElementById("deskStatus").textContent="Week "+d.week+" published on the Report tab.";
   showView("neumy",document.getElementById("tab-neumy"));
-}
-function loadWeek(){
-  const n=document.getElementById("f-load").value;
-  if(n==="0"){document.getElementById("deskStatus").textContent="Issue 0 stays locked. Start at week 1.";return;}
-  const s=loadStore();
-  if(!s[n]){document.getElementById("deskStatus").textContent="No saved week "+n+".";return;}
-  fillForm(s[n]);
-  document.getElementById("f-draft").value=s[n].draft||formatChat(s[n]);
-  document.getElementById("deskStatus").textContent="Loaded week "+n+". Edit anything.";
 }
 function copyWeek(){
   const text=document.getElementById("f-draft").value.trim()||formatChat(readForm());
