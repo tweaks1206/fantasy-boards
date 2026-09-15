@@ -66,6 +66,11 @@
     .mu-pick{font-size:13px;margin:2px 0;}
     .mu-why{font-size:13px;color:var(--muted);line-height:1.45;}
     .mu-res{font-size:12px;margin-top:5px;}
+    .genbig{display:block;width:100%;font-size:17px;padding:16px 14px;background:var(--gold);color:#fff;border:0;border-radius:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;margin:8px 0 10px;font-family:"IBM Plex Sans",system-ui,sans-serif;}
+    .genbig:disabled{background:#bbb;cursor:not-allowed;}
+    .steps{color:var(--muted);font-size:13px;line-height:1.55;margin:0 0 16px 18px;} .steps strong{color:var(--text);}
+    .lab-auto,.lab-ins{display:inline-block;font-size:9px;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:1px 6px;margin-left:6px;vertical-align:middle;}
+    .lab-auto{background:#eee;color:var(--muted);} .lab-ins{background:var(--gold);color:#fff;}
     .issue{border-left:3px solid var(--gold);padding:4px 0 4px 14px;margin-bottom:22px;}
     .issue h3{font-family:"Bebas Neue",sans-serif;font-size:26px;letter-spacing:.03em;}
     .issue .meta{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--gold);margin-bottom:8px;}
@@ -152,50 +157,57 @@
   <div id="view-desk" class="view">
     <section class="card">
       <h2>Cut this week’s report</h2>
-      <p class="hint">Same skeleton every Tuesday. Hit <strong>Generate</strong> and the scores fill every fact box from the book. You write the inserts. Publish, then Copy for the group chat and paste it raw.</p>
+      <p class="hint">Same skeleton every Tuesday. The scores do the facts. You do the inserts.</p>
+      <button class="genbig" id="genBtn" onclick="generateWeek()">Generate Week 1 report</button>
+      <ol class="steps">
+        <li><strong>Click Generate.</strong> Every box marked <span class="lab-auto">auto</span> fills from this week’s scores.</li>
+        <li><strong>Write the inserts.</strong> Every box marked <span class="lab-ins">insert</span>: the blurbs, Peter’s Notes, and the order of the power rankings.</li>
+        <li><strong>Write recommended report</strong>, read it, fix it, <strong>Publish</strong>.</li>
+        <li><strong>Copy for group chat</strong> and paste it raw.</li>
+      </ol>
       <div class="row3">
-        <div class="field"><label>Week</label><input id="f-week" type="number" min="1" max="17" value="1" /></div>
-        <div class="field"><label>Date line</label><input id="f-date" placeholder="Tuesday, Sept 15 2026" /></div>
-        <div class="field"><label>Load saved week</label><input id="f-load" type="number" min="0" max="17" placeholder="0 = issue 0" /></div>
+        <div class="field"><label>Week</label><input id="f-week" type="number" min="1" max="17" value="1" oninput="syncGenBtn()" /></div>
+        <div class="field"><label>Date line<span class="lab-auto">auto</span></label><input id="f-date" placeholder="Tuesday, Sept 15 2026" /></div>
+        <div class="field"><label>Re-open a week you published from this phone</label><input id="f-load" type="number" min="1" max="17" placeholder="week number, then Re-open below" /></div>
       </div>
-      <div class="field"><label>This week’s winners (1–7, one per line)</label><textarea id="f-winners" placeholder="Pete&#10;Tana&#10;Ja"></textarea></div>
+      <div class="field"><label>This week’s winners (1–7, one per line)<span class="lab-auto">auto</span></label><textarea id="f-winners" placeholder="Pete&#10;Tana&#10;Ja"></textarea></div>
       <div class="row2">
-        <div class="field"><label>Most PF this season 😮‍💨 (1–3)</label><textarea id="f-most" placeholder="Pete 1223.72"></textarea></div>
-        <div class="field"><label>Least PF this season 🤮 (1–3)</label><textarea id="f-least" placeholder="Dropick 870.10"></textarea></div>
-      </div>
-      <div class="row2">
-        <div class="field"><label>Closest game</label><input id="f-close-who" placeholder="Jack @ Jaden: 5.66" /></div>
-        <div class="field"><label>Closest blurb</label><textarea id="f-close-blurb"></textarea></div>
+        <div class="field"><label>Most PF this season 😮‍💨 (1–3)<span class="lab-auto">auto</span></label><textarea id="f-most" placeholder="Pete 1223.72"></textarea></div>
+        <div class="field"><label>Least PF this season 🤮 (1–3)<span class="lab-auto">auto</span></label><textarea id="f-least" placeholder="Dropick 870.10"></textarea></div>
       </div>
       <div class="row2">
-        <div class="field"><label>Biggest blowout</label><input id="f-blow-who" placeholder="Mackey @ Sumner: 49.68" /></div>
-        <div class="field"><label>Blowout blurb</label><textarea id="f-blow-blurb"></textarea></div>
+        <div class="field"><label>Closest game<span class="lab-auto">auto</span></label><input id="f-close-who" placeholder="Jack @ Jaden: 5.66" /></div>
+        <div class="field"><label>Closest blurb<span class="lab-ins">insert</span></label><textarea id="f-close-blurb"></textarea></div>
       </div>
       <div class="row2">
-        <div class="field"><label>Lucky winner</label><input id="f-lucky-who" placeholder="Bailey 93 pts W" /></div>
-        <div class="field"><label>Lucky blurb</label><textarea id="f-lucky-blurb"></textarea></div>
+        <div class="field"><label>Biggest blowout<span class="lab-auto">auto</span></label><input id="f-blow-who" placeholder="Mackey @ Sumner: 49.68" /></div>
+        <div class="field"><label>Blowout blurb<span class="lab-ins">insert</span></label><textarea id="f-blow-blurb"></textarea></div>
       </div>
       <div class="row2">
-        <div class="field"><label>Tell me how I’m losing</label><input id="f-lose-who" placeholder="Chris Adams 139.10 LOSS" /></div>
-        <div class="field"><label>Losing blurb</label><textarea id="f-lose-blurb"></textarea></div>
+        <div class="field"><label>Lucky winner<span class="lab-auto">auto</span></label><input id="f-lucky-who" placeholder="Bailey 93 pts W" /></div>
+        <div class="field"><label>Lucky blurb<span class="lab-ins">insert</span></label><textarea id="f-lucky-blurb"></textarea></div>
       </div>
       <div class="row2">
-        <div class="field"><label>Highest scoring player</label><input id="f-potw-who" placeholder="Brock Bowers 12/127/3" /></div>
-        <div class="field"><label>Player blurb</label><textarea id="f-potw-blurb"></textarea></div>
+        <div class="field"><label>Tell me how I’m losing<span class="lab-auto">auto</span></label><input id="f-lose-who" placeholder="Chris Adams 139.10 LOSS" /></div>
+        <div class="field"><label>Losing blurb<span class="lab-ins">insert</span></label><textarea id="f-lose-blurb"></textarea></div>
       </div>
-      <div class="field"><label>Peter’s Notes</label><textarea id="f-notes" style="min-height:160px" placeholder="Gentlemen! ..."></textarea></div>
       <div class="row2">
-        <div class="field"><label>SNF matchup</label><input id="f-snf-who" placeholder="Arthur (4-5) @ Mackey (6-3)" /></div>
-        <div class="field"><label>Game line + pick</label><input id="f-snf-line" placeholder="Mackey -5.5 BUT MY PICK… AJ MONEYLINE" /></div>
+        <div class="field"><label>Highest scoring player<span class="lab-auto">auto</span></label><input id="f-potw-who" placeholder="Brock Bowers 12/127/3" /></div>
+        <div class="field"><label>Player blurb<span class="lab-ins">insert</span></label><textarea id="f-potw-blurb"></textarea></div>
       </div>
-      <div class="field"><label>SNF blurb</label><textarea id="f-snf-blurb"></textarea></div>
-      <div class="field"><label>Power rankings / tiers</label><textarea id="f-ranks" style="min-height:140px" placeholder="SUPERBOWL FAVORITES:&#10;Pete&#10;Raimo&#10;PLAYOFF CONTENDERS:&#10;Mackey"></textarea></div>
-      <div class="field"><label>Sign-off</label><input id="f-sign" value="Best of luck in week X, go out there and cum!" /></div>
+      <div class="field"><label>Peter’s Notes<span class="lab-ins">insert</span></label><textarea id="f-notes" style="min-height:160px" placeholder="Gentlemen! ..."></textarea></div>
+      <div class="row2">
+        <div class="field"><label>SNF matchup<span class="lab-auto">auto</span></label><input id="f-snf-who" placeholder="Arthur (4-5) @ Mackey (6-3)" /></div>
+        <div class="field"><label>Game line + pick<span class="lab-auto">auto</span></label><input id="f-snf-line" placeholder="Mackey -5.5 BUT MY PICK… AJ MONEYLINE" /></div>
+      </div>
+      <div class="field"><label>SNF blurb<span class="lab-ins">insert</span></label><textarea id="f-snf-blurb"></textarea></div>
+      <div class="field"><label>Power rankings / tiers<span class="lab-ins">insert</span></label><textarea id="f-ranks" style="min-height:140px" placeholder="SUPERBOWL FAVORITES:&#10;Pete&#10;Raimo&#10;PLAYOFF CONTENDERS:&#10;Mackey"></textarea></div>
+      <div class="field"><label>Sign-off<span class="lab-auto">auto</span></label><input id="f-sign" value="Best of luck in week X, go out there and cum!" /></div>
       <div class="desk-actions">
         <button onclick="generateWeek()">Generate week facts from scores</button>
         <button class="ghost" onclick="writeDraft()">Write recommended report</button>
         <button class="ghost" onclick="startFresh()">Start fresh</button>
-        <button class="ghost" onclick="loadWeek()">Load saved week</button>
+        <button class="ghost" onclick="loadWeek()">Re-open published week</button>
       </div>
       <div class="field"><label>Recommended report — read it, edit it, or toss it</label><textarea id="f-draft" style="min-height:320px" placeholder="Hit Write recommended report after the facts above."></textarea></div>
       <div class="desk-actions">
@@ -424,7 +436,7 @@ function drawYear(){
 }
 drawYear();
 /* ===== ENOUGH CUM · schedule, lines, picks. Tuesday: paste new proj from `rankings.py --emit-js`, add results[w], add picks[w+1]. ===== */
-const BUILD="2026-09-15.3";   // bumped by stamp_version.py before every upload
+const BUILD="2026-09-15.4";   // bumped by stamp_version.py before every upload
 const BOOK={
 sd:25,
 proj:{"Model Busters": 127.5, "Trust The Process": 125.5, "Jackin' Goff": 123.5, "Jack's Scary Team": 123.2, "Team Mackey": 122.1, "Drew's Daring Team": 121.4, "Team Raimo": 121.0, "Team Ermesquid": 120.2, "Chokin The Belichicken": 119.8, "Team Pappas": 118.9, "Team Cream Pies LLC": 118.2, "TWEAK": 117.5, "Hansen's Most Wanted": 117.4, "Booty Bandits": 115.6},
@@ -607,7 +619,7 @@ function drawBook(){
   document.getElementById("bookPlayers").innerHTML=tbl("Top scorers (started)",top)+tbl("Left on the bench",regret)+tbl("Started and sank",sank);
 }
 document.getElementById("buildTag").textContent="build "+BUILD;
-(function(){const ws=Object.keys(BOOK.results).map(Number);if(ws.length)document.getElementById("f-week").value=Math.max(...ws);})();
+(function(){const ws=Object.keys(BOOK.results).map(Number);if(ws.length)document.getElementById("f-week").value=Math.max(...ws);syncGenBtn();})();
 drawBook();
 function showView(id,btn){
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='view-'+id));
@@ -617,7 +629,7 @@ function showView(id,btn){
     neumy:{h:"NEUMY <span>REPORT</span>",t:"Fairfield Fantasy 2019–2026 · Neumy Report",l:"Weekly column. Consolation does not exist. Tuesday mornings we add a new issue."},
     book:{h:"ENOUGH <span>CUM</span>",t:"Fairfield Fantasy 2019–2026 · Enough Cum",l:"Schedule, lines, picks. The model sets the number. You lose to it. Record printed at the top so nobody has to trust me."},
     bible:{h:"LEAGUE <span>BIBLE</span>",t:"Fairfield Fantasy 2019–2026 · League Bible",l:"Seven years of PF, PA, records, streaks, and tags. Rings up top. Grades at the bottom."},
-    desk:{h:"THE <span>DESK</span>",t:"Fairfield Fantasy 2019–2026 · Desk",l:"Commish only. Cut the week, edit the draft, publish."}
+    desk:{h:"THE <span>DESK</span>",t:"Fairfield Fantasy 2019–2026 · Desk",l:"Commish only. Generate the week, write the inserts, publish."}
   };
   const x=titles[id]||titles.neumy;
   document.getElementById("pageTitle").innerHTML=x.h;
@@ -955,11 +967,16 @@ function bookFacts(w){
     sign:"Best of luck in week "+(w+1)+", go out there and cum!"
   };
 }
+function syncGenBtn(){
+  const w=Number(document.getElementById("f-week").value||1),b=document.getElementById("genBtn"),has=!!BOOK.results[w];
+  b.textContent=has?"Generate Week "+w+" report":"Week "+w+" scores are not in yet";b.disabled=!has;
+}
 function generateWeek(){
   const w=Number(document.getElementById("f-week").value||1),st=document.getElementById("deskStatus"),f=bookFacts(w);
   if(!f){st.textContent="No scores in the book for week "+w+" yet. They land Tuesday morning.";return;}
   Object.keys(f).forEach(k=>{const el=document.getElementById("f-"+k);if(el)el.value=f[k];});
-  st.textContent="Week "+w+" facts loaded from the book. Write the inserts (blurbs, notes, rankings order), then Write recommended report or Publish.";
+  st.textContent="Week "+w+" facts are in. Now write the inserts: the blurbs, Peter’s Notes, and the order of the rankings. Then Write recommended report or Publish.";
+  const n=document.getElementById("f-notes");n.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>n.focus(),400);
 }
 function writeDraft(){
   const spin=Number(sessionStorage.getItem("ff-spin")||"0")+1;
