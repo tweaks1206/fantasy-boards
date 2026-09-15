@@ -152,7 +152,7 @@
   <div id="view-desk" class="view">
     <section class="card">
       <h2>Cut this week’s report</h2>
-      <p class="hint">Same skeleton every Tuesday. Fill the blanks, hit Publish. Then Copy for the group chat and paste it raw.</p>
+      <p class="hint">Same skeleton every Tuesday. Hit <strong>Generate</strong> and the scores fill every fact box from the book. You write the inserts. Publish, then Copy for the group chat and paste it raw.</p>
       <div class="row3">
         <div class="field"><label>Week</label><input id="f-week" type="number" min="1" max="17" value="1" /></div>
         <div class="field"><label>Date line</label><input id="f-date" placeholder="Tuesday, Sept 15 2026" /></div>
@@ -192,7 +192,8 @@
       <div class="field"><label>Power rankings / tiers</label><textarea id="f-ranks" style="min-height:140px" placeholder="SUPERBOWL FAVORITES:&#10;Pete&#10;Raimo&#10;PLAYOFF CONTENDERS:&#10;Mackey"></textarea></div>
       <div class="field"><label>Sign-off</label><input id="f-sign" value="Best of luck in week X, go out there and cum!" /></div>
       <div class="desk-actions">
-        <button onclick="writeDraft()">Write recommended report</button>
+        <button onclick="generateWeek()">Generate week facts from scores</button>
+        <button class="ghost" onclick="writeDraft()">Write recommended report</button>
         <button class="ghost" onclick="startFresh()">Start fresh</button>
         <button class="ghost" onclick="loadWeek()">Load saved week</button>
       </div>
@@ -423,7 +424,7 @@ function drawYear(){
 }
 drawYear();
 /* ===== ENOUGH CUM · schedule, lines, picks. Tuesday: paste new proj from `rankings.py --emit-js`, add results[w], add picks[w+1]. ===== */
-const BUILD="2026-09-15.2";   // bumped by stamp_version.py before every upload
+const BUILD="2026-09-15.3";   // bumped by stamp_version.py before every upload
 const BOOK={
 sd:25,
 proj:{"Model Busters": 127.5, "Trust The Process": 125.5, "Jackin' Goff": 123.5, "Jack's Scary Team": 123.2, "Team Mackey": 122.1, "Drew's Daring Team": 121.4, "Team Raimo": 121.0, "Team Ermesquid": 120.2, "Chokin The Belichicken": 119.8, "Team Pappas": 118.9, "Team Cream Pies LLC": 118.2, "TWEAK": 117.5, "Hansen's Most Wanted": 117.4, "Booty Bandits": 115.6},
@@ -606,6 +607,7 @@ function drawBook(){
   document.getElementById("bookPlayers").innerHTML=tbl("Top scorers (started)",top)+tbl("Left on the bench",regret)+tbl("Started and sank",sank);
 }
 document.getElementById("buildTag").textContent="build "+BUILD;
+(function(){const ws=Object.keys(BOOK.results).map(Number);if(ws.length)document.getElementById("f-week").value=Math.max(...ws);})();
 drawBook();
 function showView(id,btn){
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='view-'+id));
@@ -922,6 +924,42 @@ function padDraft(d){
   if(!d.ranks) d.ranks="1 Tana\n2 Chris\n3 Bailey\n4 Jack\n5 Dropick\n6 Mackey\n7 Drew\n8 Raimo\n9 Charlie\n10 Pappas\n11 Ja\n12 Tweak\n13 AJ\n14 Pete";
   if(!d.sign) d.sign="Best of luck in week "+next+", go out there and cum!";
   return d;
+}
+function bookFacts(w){
+  const res=BOOK.results[w]; if(!res) return null;
+  const games=(BOOK.sched[w]||[]).filter(([a,b])=>res[a]!=null&&res[b]!=null).map(([a,b])=>{const win=res[a]>=res[b]?a:b,lose=win===a?b:a;return {win,lose,ws:res[win],ls:res[lose],m:+(res[win]-res[lose]).toFixed(2)};});
+  if(!games.length) return null;
+  const pf={},wl={};Object.keys(BOOK.proj).forEach(t=>{pf[t]=0;wl[t]=[0,0];});
+  Object.keys(BOOK.results).filter(k=>Number(k)<=w).forEach(k=>{const r=BOOK.results[k];(BOOK.sched[k]||[]).forEach(([a,b])=>{if(r[a]==null||r[b]==null)return;pf[a]+=r[a];pf[b]+=r[b];if(r[a]>r[b]){wl[a][0]++;wl[b][1]++;}else if(r[b]>r[a]){wl[b][0]++;wl[a][1]++;}});});
+  const byPf=Object.keys(pf).sort((x,y)=>pf[y]-pf[x]);
+  const c=games.slice().sort((x,y)=>x.m-y.m)[0],b=games.slice().sort((x,y)=>y.m-x.m)[0];
+  const lucky=games.slice().sort((x,y)=>x.ws-y.ws)[0],unlucky=games.slice().sort((x,y)=>y.ls-x.ls)[0];
+  const P=(BOOK.players[w]||[]).filter(p=>p[3]==="S").sort((x,y)=>y[4]-x[4]),top=P[0];
+  const nxt=(BOOK.sched[w+1]||[]).map(([a,b])=>({a,b,L:bookLine(a,b,w+1),tot:(BOOK.proj[a]||0)+(BOOK.proj[b]||0)})).sort((x,y)=>y.tot-x.tot)[0];
+  const pk=nxt&&(BOOK.picks[w+1]||{})[nxt.a+"@"+nxt.b];
+  const rec=t=>wl[t][0]+"-"+wl[t][1];
+  const d=new Date();
+  return {
+    date:d.toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric",year:"numeric"}),
+    winners:games.slice().sort((x,y)=>y.ws-x.ws).map(g=>`${nm(g.win)} — ${g.ws.toFixed(2)} over ${nm(g.lose)} ${g.ls.toFixed(2)}`).join("\n"),
+    most:byPf.slice(0,3).map(t=>`${nm(t)} — ${pf[t].toFixed(2)}`).join("\n"),
+    least:byPf.slice(-3).reverse().map(t=>`${nm(t)} — ${pf[t].toFixed(2)}`).join("\n"),
+    "close-who":`${nm(c.win)} over ${nm(c.lose)}: ${c.m.toFixed(2)}`,
+    "blow-who":`${nm(b.win)} over ${nm(b.lose)}: ${b.m.toFixed(2)}`,
+    "lucky-who":`${nm(lucky.win)} ${lucky.ws.toFixed(2)} W (lowest winning score)`,
+    "lose-who":`${nm(unlucky.lose)} ${unlucky.ls.toFixed(2)} LOSS (highest losing score)`,
+    "potw-who":top?`${top[1]} (${top[2]}, ${nm(top[0])}) ${top[4].toFixed(1)}`:"",
+    "snf-who":nxt?`${nm(nxt.a)} (${rec(nxt.a)}) @ ${nm(nxt.b)} (${rec(nxt.b)})`:"",
+    "snf-line":nxt?`${nm(nxt.L.fav)} ${sideTxt(nxt.L.fav,nxt.L)}`+(pk?` BUT MY PICK… ${pickTxt(pk,nxt.L)}`:""):"",
+    ranks:Object.keys(wl).sort((x,y)=>wl[y][0]-wl[x][0]||pf[y]-pf[x]).map((t,i)=>`${i+1} ${BOOK.who[t]||nm(t)} (${rec(t)})`).join("\n"),
+    sign:"Best of luck in week "+(w+1)+", go out there and cum!"
+  };
+}
+function generateWeek(){
+  const w=Number(document.getElementById("f-week").value||1),st=document.getElementById("deskStatus"),f=bookFacts(w);
+  if(!f){st.textContent="No scores in the book for week "+w+" yet. They land Tuesday morning.";return;}
+  Object.keys(f).forEach(k=>{const el=document.getElementById("f-"+k);if(el)el.value=f[k];});
+  st.textContent="Week "+w+" facts loaded from the book. Write the inserts (blurbs, notes, rankings order), then Write recommended report or Publish.";
 }
 function writeDraft(){
   const spin=Number(sessionStorage.getItem("ff-spin")||"0")+1;
